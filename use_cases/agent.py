@@ -17,9 +17,12 @@ class Agent:
         """
         Respond to a question by classifying it, selecting a document, and generating an answer.
         """
-        # Step 1: Classify the question to find relevant context
         document = self.question_classifier.classify(question)
         context = document["content"]
+
+        # This is a placeholder for more sophisticated context retrieval logic
+        if not context:
+            return "No relevant information found to answer your question."
 
         response = self.answer_generator.generate(question, context)
 

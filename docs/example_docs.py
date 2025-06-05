@@ -6,6 +6,9 @@ class Document(TypedDict):
     content: str
     questions: List[str]
 
+class EmptyResponse(TypedDict):
+    content: None
+
 documents: List[Document] = [
     {
         "content": "Our refund policy allows returns within 30 days.",

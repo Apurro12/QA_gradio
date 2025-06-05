@@ -1,11 +1,10 @@
 import gradio as gr
-from use_cases.classify_question import classify_question
-from use_cases.answer_question import answer_question
+from use_cases.agent import LLM
+
+llm = LLM()
 
 def respond(question):
-    context = classify_question(question)
-    answer = answer_question(question, context)
-    return answer
+    return llm.respond(question)
 
 iface = gr.Interface(fn=respond, inputs="text", outputs="text", title="RAG System")
 iface.launch()

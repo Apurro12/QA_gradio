@@ -33,7 +33,7 @@ if __name__ == "__main__":
     from use_cases.classify_question import QuestionClassifier
     from use_cases.answer_question import AnswerGenerator
     from infrastructure.llm_client import LLMClient
-    from docs.example_docs import example_docs
+    from tests.example_docs import example_docs
 
     llm = LLMClient()
     question_classifier = QuestionClassifier(documents = example_docs)

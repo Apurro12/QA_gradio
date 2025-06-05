@@ -1,4 +1,4 @@
-from infrastructure.llm_client import BaseLLMClient
+from domain.llm_client import BaseLLMClient
 from abc import ABC, abstractmethod
 
 class BaseAnswerGenerator(ABC):

@@ -1,27 +1,14 @@
 from langchain_openai import OpenAI
 from dotenv import load_dotenv
 import os
-from abc import ABC, abstractmethod
+from domain.llm_client import BaseLLMClient
+
 
 # Get the directory of the current file
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Load the .env file relative to the current file's directory
 load_dotenv(os.path.join(current_dir, "../.env"), override=True)
-
-
-class BaseLLMClient(ABC):
-    """
-    Base class for LLM clients.
-    This class can be extended to implement specific LLM client functionalities.
-    """
-
-    @abstractmethod
-    def invoke(self, prompt: str) -> str:
-        """
-        Abstract method to be implemented by subclasses to generate a response.
-        """
-        raise NotImplementedError("Subclasses must implement this method.")
 
 # Should be this an abstract class?
 # Should be this an interface?

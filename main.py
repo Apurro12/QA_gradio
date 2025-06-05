@@ -3,11 +3,12 @@ from infrastructure.llm_client import LLMClient
 from use_cases.classify_question import QuestionClassifier
 from use_cases.answer_question import AnswerGenerator
 from use_cases.agent import Agent
+from docs.example_docs import example_docs
 
 def main():
     # Wiring: instantiate concrete implementations
     llm = LLMClient()
-    question_classifier = QuestionClassifier()
+    question_classifier = QuestionClassifier(documents = example_docs)
     answer_generator = AnswerGenerator(llm)
 
     # Create the agent with injected dependencies

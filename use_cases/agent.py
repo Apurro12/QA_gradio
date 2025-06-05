@@ -1,8 +1,9 @@
+from domain.agent import BaseAgent
 from use_cases.classify_question import BaseQuestionClassifier
 from use_cases.answer_question import AnswerGenerator
 from infrastructure.llm_client import BaseLLMClient
 
-class Agent:
+class Agent(BaseAgent):
     def __init__(
             self, 
             llm: BaseLLMClient, 
@@ -32,9 +33,10 @@ if __name__ == "__main__":
     from use_cases.classify_question import QuestionClassifier
     from use_cases.answer_question import AnswerGenerator
     from infrastructure.llm_client import LLMClient
+    from docs.example_docs import example_docs
 
     llm = LLMClient()
-    question_classifier = QuestionClassifier()
+    question_classifier = QuestionClassifier(documents = example_docs)
     answer_generator = AnswerGenerator(llm)
     
     agent = Agent(llm, question_classifier, answer_generator)

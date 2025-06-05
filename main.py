@@ -1,27 +1,20 @@
-from use_cases.build_kb import build_kb
-from use_cases.classify_question import classify_question
-from use_cases.answer_question import answer_question
-from use_cases.agent import LLM
+from interfaces.gradio_ui import launch_gradio
+from infrastructure.llm_client import LLMClient
+from use_cases.classify_question import QuestionClassifier
+from use_cases.answer_question import AnswerGenerator
+from use_cases.agent import Agent
 
 def main():
-    llm = LLM()
+    # Wiring: instantiate concrete implementations
+    llm = LLMClient()
+    question_classifier = QuestionClassifier()
+    answer_generator = AnswerGenerator(llm)
 
-    # Step 1: Build the knowledge base
-    documents = ["This is a sample document.", "Another example response."]
-    build_kb(documents)
+    # Create the agent with injected dependencies
+    agent = Agent(llm, question_classifier, answer_generator)
 
-    # Step 2: Classify a question
-    question = "What is an example response?"
-    context = classify_question(question)
-
-    # Step 3: Generate an answer
-    answer = answer_question(question, context)
-    print(f"Q: {question}\nA: {answer}")
-
-    # Example question
-    question = "What is an example response?"
-    answer = llm.respond(question)
-    print(f"Q: {question}\nA: {answer}")
+    # Launch the Gradio interface
+    launch_gradio(agent)
 
 if __name__ == "__main__":
     main()

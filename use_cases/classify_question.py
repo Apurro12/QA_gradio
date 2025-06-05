@@ -1,9 +1,12 @@
-from infrastructure.vector_store import VectorStore
+from docs.example_docs import Document
+from docs.example_docs import documents
 
-def classify_question(question):
+def classify_question(question: str) -> Document:
     """
     Classify the question and retrieve the most relevant document.
     """
-    vector_store = VectorStore()
-    result = vector_store.query(question)
-    return result
+    for doc in documents:
+        #This must be a more sophisticated search in the future
+        if question in doc["questions"]:
+            return doc
+    return {"content": "No relevant document found.", "questions": []}

@@ -1,9 +1,9 @@
 import gradio as gr
-from rag_system.use_cases.agent import Agent
+from rag_system.domain.agent import BaseAgent
 
 
 # This Agent class should be modified to an abstract class
-def launch_gradio(agent: Agent):
+def launch_gradio(agent: BaseAgent):
     def respond_to_question(user_question: str) -> str:
         return agent.respond_user_question(user_question)
 
@@ -18,15 +18,20 @@ def launch_gradio(agent: Agent):
     iface.launch()
 
 if __name__ == "__main__":
-    from use_cases.classify_question import QuestionClassifier
-    from use_cases.answer_question import AnswerGenerator
-    from infrastructure.llm_client import LLMClient
-    # This import is being used twice because later I will move
-    # The Agent class to a abstract class
-    from use_cases.agent import Agent
+    from rag_system.use_cases.classify_question import QuestionClassifier
+    from rag_system.use_cases.answer_question import AnswerGenerator
+    from rag_system.infrastructure.llm_client import LLMClient
+    from rag_system.domain.document import example_docs
+    from rag_system.use_cases.agent import Agent
+    
 
+    # Wiring: instantiate concrete implementations
     llm = LLMClient()
-    question_classifier = QuestionClassifier()
+    question_classifier = QuestionClassifier(documents = example_docs)
     answer_generator = AnswerGenerator(llm)
+
+    # Create the agent with injected dependencies
     agent = Agent(llm, question_classifier, answer_generator)
+
+    # Launch the Gradio interface
     launch_gradio(agent)

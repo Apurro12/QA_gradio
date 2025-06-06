@@ -1,5 +1,5 @@
 from typing import List
-from domain.document import Document
+from rag_system.domain.document import Document
 
 class VectorStore:
     def __init__(self):

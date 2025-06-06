@@ -8,7 +8,7 @@ from rag_system.domain.llm_client import BaseLLMClient
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Load the .env file relative to the current file's directory
-load_dotenv(os.path.join(current_dir, "../.env"), override=True)
+load_dotenv(os.path.join(current_dir, "../../../.env"), override=True)
 
 # Should be this an abstract class?
 # Should be this an interface?

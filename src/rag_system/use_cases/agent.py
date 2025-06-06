@@ -36,7 +36,7 @@ if __name__ == "__main__":
     from rag_system.domain.document import example_docs
 
     llm = LLMClient()
-    question_classifier = QuestionClassifier(documents = example_docs)
+    question_classifier = QuestionClassifier(documents=example_docs)
     answer_generator = AnswerGenerator(llm)
     
     agent = Agent(llm, question_classifier, answer_generator)

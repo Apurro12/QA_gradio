@@ -1,5 +1,6 @@
 import gradio as gr
-from use_cases.agent import Agent
+from rag_system.use_cases.agent import Agent
+
 
 # This Agent class should be modified to an abstract class
 def launch_gradio(agent: Agent):

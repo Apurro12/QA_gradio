@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.document import Document, EmptyResponse
+from rag_system.domain.document import Document, EmptyResponse
 
 class BaseQuestionClassifier(ABC):
     """

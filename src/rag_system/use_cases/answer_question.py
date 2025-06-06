@@ -1,5 +1,5 @@
-from domain.answer_generator import BaseAnswerGenerator
-from domain.llm_client import BaseLLMClient
+from rag_system.domain.answer_generator import BaseAnswerGenerator
+from rag_system.domain.llm_client import BaseLLMClient
 
 class AnswerGenerator(BaseAnswerGenerator):
     """

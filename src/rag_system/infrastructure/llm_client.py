@@ -1,7 +1,7 @@
 from langchain_openai import OpenAI
 from dotenv import load_dotenv
 import os
-from domain.llm_client import BaseLLMClient
+from rag_system.domain.llm_client import BaseLLMClient
 
 
 # Get the directory of the current file

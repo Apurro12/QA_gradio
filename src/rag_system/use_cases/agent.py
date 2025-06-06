@@ -1,7 +1,7 @@
-from domain.agent import BaseAgent
-from use_cases.classify_question import BaseQuestionClassifier
-from use_cases.answer_question import AnswerGenerator
-from infrastructure.llm_client import BaseLLMClient
+from rag_system.domain.agent import BaseAgent
+from rag_system.use_cases.classify_question import BaseQuestionClassifier
+from rag_system.use_cases.answer_question import AnswerGenerator
+from rag_system.infrastructure.llm_client import BaseLLMClient
 
 class Agent(BaseAgent):
     def __init__(
@@ -30,10 +30,10 @@ class Agent(BaseAgent):
         return response
 
 if __name__ == "__main__":
-    from use_cases.classify_question import QuestionClassifier
-    from use_cases.answer_question import AnswerGenerator
-    from infrastructure.llm_client import LLMClient
-    from tests.example_docs import example_docs
+    from rag_system.use_cases.classify_question import QuestionClassifier
+    from rag_system.use_cases.answer_question import AnswerGenerator
+    from rag_system.infrastructure.llm_client import LLMClient
+    from rag_system.domain.document import example_docs
 
     llm = LLMClient()
     question_classifier = QuestionClassifier(documents = example_docs)

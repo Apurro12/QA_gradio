@@ -1,5 +1,5 @@
-from infrastructure.vector_store import VectorStore
-from domain.document import Document
+from rag_system.infrastructure.vector_store import VectorStore
+from rag_system.domain.document import Document
 
 def build_kb(documents):
     """

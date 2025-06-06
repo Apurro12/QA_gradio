@@ -1,9 +1,13 @@
+## To install the project run 
+1) uv sync
+2) uv pip install -e . 
+
 ## to run standalone files go to the parent folder and run 
-uv run python -m domain.agent  
-uv run python -m infrastructure.llm_client
+uv run -m rag_system.use_cases.agent
+uv run -m rag_system.infrastructure.llm_client
 
 # to lunch gradio
-uv run python -m interfaces.gradio_ui
+uv run main.py 
 
 # To DO:
 * Add abstract class to the vector store (I'm still not using it)

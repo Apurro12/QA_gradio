@@ -1,5 +1,5 @@
-from domain.classify_question import BaseQuestionClassifier
-from domain.document import Document, EmptyResponse, Documents
+from rag_system.domain.classify_question import BaseQuestionClassifier
+from rag_system.domain.document import Document, EmptyResponse, Documents
 
 class QuestionClassifier(BaseQuestionClassifier):
     """

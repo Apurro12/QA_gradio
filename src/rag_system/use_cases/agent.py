@@ -28,13 +28,12 @@ class Agent(BaseAgent):
 
 if __name__ == "__main__":
     from rag_system.interfaces.strategies_classifier.classify_question import ExactMatchClassifier
-    from rag_system.use_cases.answer_question import AnswerGenerator
-    from rag_system.infrastructure.llm_client import LLMClient
-    from rag_system.domain.document import example_docs
+    from rag_system.use_cases.answer_question import OfflineAnswerGenerator
+    from rag_system.infrastructure.document_loader import OfflineDocumentLoader
 
-    llm = LLMClient()
-    question_classifier = ExactMatchClassifier(documents=example_docs)
-    answer_generator = AnswerGenerator(llm)
+    offline_document_loader = OfflineDocumentLoader()
+    question_classifier = ExactMatchClassifier(document_loader=offline_document_loader)
+    answer_generator = OfflineAnswerGenerator()
     
     agent = Agent(question_classifier, answer_generator)
     print(agent.respond_user_question("How can I get a refund?"))

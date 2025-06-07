@@ -1,7 +1,7 @@
 from rag_system.domain.classify_question import BaseQuestionClassifier
 from rag_system.domain.document import Document, EmptyResponse, Documents
 
-class QuestionClassifier(BaseQuestionClassifier):
+class ExactMatchClassifier(BaseQuestionClassifier):
     """
     Classify the question and retrieve the most relevant document.
     """

@@ -10,6 +10,13 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # Load the .env file relative to the current file's directory
 load_dotenv(os.path.join(current_dir, "../../../.env"), override=True)
 
+class OfflineLLMClient(BaseLLMClient):
+    def __init__(self) -> None:
+        pass
+
+    def invoke(self, prompt: str) -> str:
+        return 'Offline response'
+
 # Should be this an abstract class?
 # Should be this an interface?
 # Should OpenAIClient inherit from the abstract class or interface?

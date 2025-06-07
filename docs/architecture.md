@@ -13,7 +13,7 @@ graph TD
 
     subgraph Use Cases
         Agent["Agent"]
-        QuestionClassifier["QuestionClassifier"]
+        ExactMatchClassifier["ExactMatchClassifier"]
         AnswerGenerator["AnswerGenerator"]
         BuildKB["build_kb"]
     end
@@ -31,14 +31,14 @@ graph TD
 
     BaseAgent --> Agent
     BaseLLMClient --> LLMClient
-    BaseQuestionClassifier --> QuestionClassifier
+    BaseQuestionClassifier --> ExactMatchClassifier
     BaseAnswerGenerator --> AnswerGenerator
     Document --> VectorStore
-    EmptyResponse --> QuestionClassifier
+    EmptyResponse --> ExactMatchClassifier
 
-    Agent --> QuestionClassifier
+    Agent --> ExactMatchClassifier
     Agent --> AnswerGenerator
-    QuestionClassifier --> Document
+    ExactMatchClassifier --> Document
     AnswerGenerator --> LLMClient
     BuildKB --> VectorStore
 

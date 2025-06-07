@@ -1,16 +1,13 @@
 from rag_system.domain.agent import BaseAgent
-from rag_system.use_cases.classify_question import BaseQuestionClassifier
-from rag_system.use_cases.answer_question import AnswerGenerator
-from rag_system.infrastructure.llm_client import BaseLLMClient
+from rag_system.domain.answer_generator import BaseAnswerGenerator
+from rag_system.interfaces.strategies_classifier.classify_question import BaseQuestionClassifier
 
 class Agent(BaseAgent):
     def __init__(
             self, 
-            llm: BaseLLMClient, 
             question_classifier: BaseQuestionClassifier,
-            answer_generator: AnswerGenerator
+            answer_generator: BaseAnswerGenerator
             ):
-        self.llm = llm
         self.question_classifier = question_classifier
         self.answer_generator = answer_generator
 
@@ -30,14 +27,14 @@ class Agent(BaseAgent):
         return response
 
 if __name__ == "__main__":
-    from rag_system.use_cases.classify_question import QuestionClassifier
+    from rag_system.interfaces.strategies_classifier.classify_question import ExactMatchClassifier
     from rag_system.use_cases.answer_question import AnswerGenerator
     from rag_system.infrastructure.llm_client import LLMClient
     from rag_system.domain.document import example_docs
 
     llm = LLMClient()
-    question_classifier = QuestionClassifier(documents=example_docs)
+    question_classifier = ExactMatchClassifier(documents=example_docs)
     answer_generator = AnswerGenerator(llm)
     
-    agent = Agent(llm, question_classifier, answer_generator)
+    agent = Agent(question_classifier, answer_generator)
     print(agent.respond_user_question("How can I get a refund?"))

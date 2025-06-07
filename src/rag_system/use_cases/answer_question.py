@@ -1,6 +1,18 @@
 from rag_system.domain.answer_generator import BaseAnswerGenerator
 from rag_system.domain.llm_client import BaseLLMClient
 
+class OfflineAnswerGenerator(BaseAnswerGenerator):
+    """
+    Class to generate offline responses
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def generate(self, question: str, context: str) -> str:
+        return f"offline response: \n question: {question} \n context: {context}"
+    
+
 class AnswerGenerator(BaseAnswerGenerator):
     """
     Generate an answer to the question using the provided context.

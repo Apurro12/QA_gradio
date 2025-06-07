@@ -18,7 +18,7 @@ def launch_gradio(agent: BaseAgent):
     iface.launch()
 
 if __name__ == "__main__":
-    from rag_system.use_cases.classify_question import QuestionClassifier
+    from rag_system.interfaces.strategies_classifier.classify_question import ExactMatchClassifier
     from rag_system.use_cases.answer_question import AnswerGenerator
     from rag_system.infrastructure.llm_client import LLMClient
     from rag_system.domain.document import example_docs
@@ -27,11 +27,11 @@ if __name__ == "__main__":
 
     # Wiring: instantiate concrete implementations
     llm = LLMClient()
-    question_classifier = QuestionClassifier(documents = example_docs)
+    question_classifier = ExactMatchClassifier(documents = example_docs)
     answer_generator = AnswerGenerator(llm)
 
     # Create the agent with injected dependencies
-    agent = Agent(llm, question_classifier, answer_generator)
+    agent = Agent(question_classifier, answer_generator)
 
     # Launch the Gradio interface
     launch_gradio(agent)

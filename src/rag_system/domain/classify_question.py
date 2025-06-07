@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-
 from rag_system.domain.document import Document, EmptyResponse
 
 class BaseQuestionClassifier(ABC):

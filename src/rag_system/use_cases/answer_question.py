@@ -6,11 +6,11 @@ class OfflineAnswerGenerator(BaseAnswerGenerator):
     Class to generate offline responses
     """
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, llm: BaseLLMClient):
+        self.llm = llm
 
     def generate(self, question: str, context: str) -> str:
-        return f"offline response: \n question: {question} \n context: {context}"
+        return f"offline answer generator: \n question: '{question}' \n context: '{context}' \n llm call: '{self.llm.invoke('llm_call')}'"
     
 
 class AnswerGenerator(BaseAnswerGenerator):

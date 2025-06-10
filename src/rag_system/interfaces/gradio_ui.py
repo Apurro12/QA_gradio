@@ -21,10 +21,12 @@ if __name__ == "__main__":
     from rag_system.interfaces.strategies_classifier.classify_question import ExactMatchClassifier
     from rag_system.use_cases.answer_question import OfflineAnswerGenerator
     from rag_system.infrastructure.document_loader import OfflineDocumentLoader
+    from rag_system.infrastructure.llm_client import OfflineLLMClient
 
+    llm = OfflineLLMClient()
     offline_document_loader = OfflineDocumentLoader()
     question_classifier = ExactMatchClassifier(document_loader=offline_document_loader)
-    answer_generator = OfflineAnswerGenerator()
+    answer_generator = OfflineAnswerGenerator(llm=llm)
     from rag_system.use_cases.agent import Agent
 
     agent = Agent(question_classifier, answer_generator)

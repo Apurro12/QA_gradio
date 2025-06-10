@@ -10,7 +10,7 @@ from rag_system.use_cases.agent import Agent
 def main(offline: bool):
     # Wiring: instantiate concrete implementations
     llm = OfflineLLMClient() if offline else LLMClient()
-    answer_generator = OfflineAnswerGenerator() if offline else AnswerGenerator(llm)
+    answer_generator = OfflineAnswerGenerator(llm) if offline else AnswerGenerator(llm)
 
     # This need to be updated when I have another document loader (e.g. from a vector store)
     offline_document_loader = OfflineDocumentLoader() if offline else OfflineDocumentLoader()

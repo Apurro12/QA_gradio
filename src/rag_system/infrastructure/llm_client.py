@@ -15,7 +15,7 @@ class OfflineLLMClient(BaseLLMClient):
         pass
 
     def invoke(self, prompt: str) -> str:
-        return 'Offline response'
+        return prompt
 
 # Should be this an abstract class?
 # Should be this an interface?

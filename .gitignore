@@ -11,3 +11,7 @@ wheels/
 
 # environment variables
 .env
+
+# coverage
+.coverage
+coverage.xml

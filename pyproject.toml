@@ -12,13 +12,9 @@ dependencies = [
     "mypy>=1.16.0",
     "openai>=1.84.0",
     "pydantic>=2.11.5",
+    "pytest>=8.4.0",
 ]
 
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
-
-[dependency-groups]
-dev = [
-    "pytest>=8.4.0",
-]

@@ -18,7 +18,7 @@ for llm_client.py
 3) uv run mypy tests (this is still not working)
 
 # To run ruff
-1) uv run ruff check src .
+1) uv run ruff check src
 
 # To D0:
 * Add abstract class to the vector store (I'm still not using it)
@@ -67,3 +67,8 @@ The project uses the following dependencies, as specified in `pyproject.toml`:
 - **langchain-openai**: Specific integration with OpenAI's API.
 - **openai**: Direct OpenAI API client.
 - **pydantic**: For data validation and type enforcement.
+
+## Classifiers
+
+- `ExactMatchClassifier`: Matches user questions to predefined questions using exact string matching.
+- `FuzzyMatchClassifier`: Uses fuzzy string similarity to match user questions to the closest predefined question. This is more robust for minor typos or paraphrasing.

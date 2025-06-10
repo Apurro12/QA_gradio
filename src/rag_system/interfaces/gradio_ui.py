@@ -19,7 +19,7 @@ def launch_gradio(agent: BaseAgent):
 
 if __name__ == "__main__":
     from rag_system.interfaces.strategies_classifier.classify_question import ExactMatchClassifier
-    from rag_system.use_cases.answer_question import OfflineAnswerGenerator
+    from rag_system.use_cases.answer_generator import OfflineAnswerGenerator
     from rag_system.infrastructure.document_loader import OfflineDocumentLoader
     from rag_system.infrastructure.llm_client import OfflineLLMClient
 

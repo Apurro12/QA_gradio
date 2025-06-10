@@ -34,4 +34,5 @@ jobs:
 
       - name: Run Pytest with Coverage
         run: |
-          uv run pytest --cov=src --cov-report=term --maxfail=1
+          uv run pytest --cov=src --cov-report=term --maxfail=1 --cov-fail-under=100
+          uv run coverage report -m

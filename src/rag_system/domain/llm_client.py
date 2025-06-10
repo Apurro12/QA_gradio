@@ -10,4 +10,4 @@ class BaseLLMClient(ABC):
         """
         Abstract method to be implemented by subclasses to generate a response.
         """
-        raise NotImplementedError("Subclasses must implement this method.")
+        raise NotImplementedError("Subclasses must implement this method.") # pragma: no cover

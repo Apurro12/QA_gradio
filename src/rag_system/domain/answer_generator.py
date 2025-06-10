@@ -7,4 +7,4 @@ class BaseAnswerGenerator(ABC):
     """
     @abstractmethod
     def generate(self, question: str, context: str) -> str:
-        pass
+        pass # pragma: no cover

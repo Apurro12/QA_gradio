@@ -39,7 +39,7 @@ class LLMClient(BaseLLMClient):
         except Exception as e:
             return f"An error occurred: {e}"
         
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover, JUST DO WHEN RUNNING THIS FILE DIRECTLY
     client = LLMClient()
     test_prompt = "What is the capital of France?"
     response = client.invoke(test_prompt)

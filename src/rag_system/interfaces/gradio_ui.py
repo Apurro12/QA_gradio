@@ -1,9 +1,13 @@
-import gradio as gr
-from rag_system.domain.agent import BaseAgent
+import gradio as gr # pragma: no cover
+from rag_system.domain.agent import BaseAgent # pragma: no cover
 
+# NEVER NEVER CHANGE THIS FILE
+# THIS FILE IS NOT TESTED
 
-# This Agent class should be modified to an abstract class
-def launch_gradio(agent: BaseAgent):
+# This file is used to launch the Gradio interface for the RAG agent.
+# It is designed to be run as a standalone script.
+
+def launch_gradio(agent: BaseAgent): # pragma: no cover
     def respond_to_question(user_question: str) -> str:
         return agent.respond_user_question(user_question)
 
@@ -17,7 +21,7 @@ def launch_gradio(agent: BaseAgent):
 
     iface.launch()
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     from rag_system.interfaces.strategies_classifier.classify_question import ExactMatchClassifier
     from rag_system.use_cases.answer_generator import OfflineAnswerGenerator
     from rag_system.infrastructure.document_loader import OfflineDocumentLoader
@@ -31,5 +35,4 @@ if __name__ == "__main__":
 
     agent = Agent(question_classifier, answer_generator)
 
-    # Launch the Gradio interface
     launch_gradio(agent)

@@ -8,4 +8,4 @@ class BaseQuestionClassifier(ABC):
     """
     @abstractmethod
     def classify(self, question: str) -> Document| EmptyResponse:
-        raise NotImplementedError("This method should be overridden by subclasses.")
+        raise NotImplementedError("This method should be overridden by subclasses.") # pragma: no cover

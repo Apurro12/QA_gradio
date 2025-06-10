@@ -6,4 +6,4 @@ class BaseAgent(ABC):
     """
     @abstractmethod
     def respond_user_question(self, question: str) -> str:
-        pass
+        pass # pragma: no cover

@@ -26,7 +26,7 @@ class Agent(BaseAgent):
 
         return response
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover, JUST DO WHEN RUNNING THIS FILE DIRECTLY
     from rag_system.interfaces.strategies_classifier.classify_question import ExactMatchClassifier
     from rag_system.use_cases.answer_generator import OfflineAnswerGenerator
     from rag_system.infrastructure.document_loader import OfflineDocumentLoader

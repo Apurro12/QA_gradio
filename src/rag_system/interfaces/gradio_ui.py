@@ -22,7 +22,7 @@ def launch_gradio(agent: BaseAgent): # pragma: no cover
     iface.launch()
 
 if __name__ == "__main__": # pragma: no cover
-    from rag_system.interfaces.strategies_classifier.classify_question import ExactMatchClassifier
+    from rag_system.interfaces.strategies_classifier.exact_match_classifier import ExactMatchClassifier
     from rag_system.use_cases.answer_generator import OfflineAnswerGenerator
     from rag_system.infrastructure.document_loader import OfflineDocumentLoader
     from rag_system.infrastructure.llm_client import OfflineLLMClient

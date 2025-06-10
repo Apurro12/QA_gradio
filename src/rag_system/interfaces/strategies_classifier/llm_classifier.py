@@ -15,7 +15,7 @@ class LLMClassifier(BaseQuestionClassifier):
     def classify(self, question: str) -> Document | EmptyResponse:
         documents = list(self.document_loader.load())
         if not documents:
-            return {"content": None}
+            return EmptyResponse({"content": None})
         # Prepare prompt for LLM to select the best matching document
         prompt = (
             "Given the following example questions and user question, select the set of example questions that best represent the actual user question.\n\n"
@@ -39,3 +39,13 @@ class LLMClassifier(BaseQuestionClassifier):
             return documents[index - 1]
         
         return EmptyResponse({"content": None})
+    
+if __name__ == "__main__": # pragma: no cover
+        from rag_system.infrastructure.document_loader import OfflineDocumentLoader
+        from rag_system.infrastructure.llm_client import OfflineLLMClient
+
+        llm = OfflineLLMClient()
+        document_loader = OfflineDocumentLoader()
+        llm_classifier = LLMClassifier(document_loader, llm)
+
+        llm_classifier.classify("How can I get a refund?")

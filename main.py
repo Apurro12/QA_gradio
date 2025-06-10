@@ -2,7 +2,7 @@ import argparse
 from rag_system.infrastructure.document_loader import OfflineDocumentLoader
 from rag_system.infrastructure.llm_client import LLMClient, OfflineLLMClient
 from rag_system.interfaces.gradio_ui import launch_gradio
-from rag_system.interfaces.strategies_classifier.classify_question import ExactMatchClassifier
+from rag_system.interfaces.strategies_classifier.exact_match_classifier import ExactMatchClassifier
 from rag_system.use_cases.answer_generator import AnswerGenerator, OfflineAnswerGenerator
 from rag_system.use_cases.agent import Agent
 

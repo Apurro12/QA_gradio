@@ -1,6 +1,6 @@
 import pytest
 from rag_system.domain.agent import BaseAgent
-from rag_system.interfaces.strategies_classifier.classify_question import ExactMatchClassifier
+from rag_system.interfaces.strategies_classifier.exact_match_classifier import ExactMatchClassifier
 from rag_system.use_cases.agent import Agent
 from rag_system.use_cases.answer_generator import OfflineAnswerGenerator
 from rag_system.infrastructure.document_loader import OfflineDocumentLoader

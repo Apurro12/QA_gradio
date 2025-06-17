@@ -17,7 +17,7 @@ class TestOfflineAnswerGenerator:
         assert isinstance(offline_response, str)
 
         expected_offline_response = (
-            f"offline answer generator: \n question: '{test_question}' \n context: '{test_response}' \n llm call: '{offline_answer_generator.llm.invoke('llm_call')}'"
+            f"[OFFLINE ANSWER GENERATOR] {offline_answer_generator.llm.invoke('[OFFLINE LLM CALL]')}"
         )
         assert offline_response == expected_offline_response
 
@@ -36,7 +36,8 @@ class TestAnswerGenerator:
         question = "What is AI?"
         context = "AI stands for Artificial Intelligence."
         result = answer_generator.generate(question, context)
-        expected_prompt = f"Context: {context}\nQuestion: {question}\nAnswer:"
+        
+        expected_prompt = f"respond this question:\n{question}\n\nbased in this context: \n{context}\n"
         mock_llm.invoke.assert_called_once_with(expected_prompt)
         assert result == "mocked llm response"
 

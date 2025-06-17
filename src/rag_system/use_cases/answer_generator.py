@@ -10,7 +10,7 @@ class OfflineAnswerGenerator(BaseAnswerGenerator):
         self.llm = llm
 
     def generate(self, question: str, context: str) -> str:
-        return f"offline answer generator: \n question: '{question}' \n context: '{context}' \n llm call: '{self.llm.invoke('llm_call')}'"
+        return f"[OFFLINE ANSWER GENERATOR] {self.llm.invoke('[OFFLINE LLM CALL]')}"
     
 
 class AnswerGenerator(BaseAnswerGenerator):
@@ -21,6 +21,6 @@ class AnswerGenerator(BaseAnswerGenerator):
         self.llm = llm
 
     def generate(self, question: str, context: str) -> str:
-        prompt = f"Context: {context}\nQuestion: {question}\nAnswer:"
+        prompt = f"respond this question:\n{question}\n\nbased in this context: \n{context}\n"
         response: str = self.llm.invoke(prompt)
         return response

@@ -62,7 +62,7 @@ def test_chat_with_no_conversation_manager(offline_agent: BaseAgent):
 
 
 
-def test_chat_with_conversation_manager(offline_agent_with_conversation_manager: BaseAgent):
+def test_chat_with_conversation_manager_no_history_no_context(offline_agent_with_conversation_manager: BaseAgent):
     empty_history: List[Message] = []
     message = "First message"
     result = offline_agent_with_conversation_manager.chat(message, empty_history)

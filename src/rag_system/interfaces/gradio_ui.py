@@ -9,19 +9,25 @@ from typing import List # pragma: no cover
 # This file is used to launch the Gradio interface for the RAG agent.
 # It is designed to be run as a standalone script.
 
-def launch_gradio(agent: BaseAgent): # pragma: no cover
+def make_respond_to_question(agent: BaseAgent):
     def respond_to_question(message: str, history: List[GradioHistoryMessage]) -> str:
         history_list: List[Message] = list(map(lambda gradio_message: Message(role= gradio_message["role"], content= gradio_message["content"]), history))
         return agent.chat(message, history_list)
+    return respond_to_question
 
+def make_interface(agent: BaseAgent):
     iface = gr.ChatInterface(
-        fn=respond_to_question,
+        fn=make_respond_to_question(agent),
         title="RAG Agent Chat",
         description="Have a conversation and ask questions based on documents.",
         textbox=gr.Textbox(placeholder="Ask your question here...", container=False, scale=7),
         type="messages" #This is the type of the input, it should a openai style [{"role": "user"/asistant", "content": "your question"}]
     )
 
+    return iface
+
+def launch_gradio(agent: BaseAgent): # pragma: no cover
+    iface = make_interface(agent)
     iface.launch()
 
 if __name__ == "__main__": # pragma: no cover

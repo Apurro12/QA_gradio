@@ -9,7 +9,8 @@ from rag_system.use_cases.agent import Agent
 from rag_system.infrastructure.conversation_manager import InMemoryConversationManager
 
 
-def main(offline: bool, use_conversation_manager: bool):
+def create_agent(offline: bool, use_conversation_manager: bool):
+    """Create and return configured agent"""
     # Wiring: instantiate concrete implementations
     llm = OfflineLLMClient() if offline else LLMClient()
     answer_generator = OfflineAnswerGenerator(llm) if offline else AnswerGenerator(llm)
@@ -21,7 +22,11 @@ def main(offline: bool, use_conversation_manager: bool):
     # Conditionally add conversation manager
     conversation_manager = InMemoryConversationManager() if use_conversation_manager else None
 
-    agent = Agent(question_classifier, answer_generator, conversation_manager)
+    return Agent(question_classifier, answer_generator, conversation_manager)
+
+
+def main(offline: bool, use_conversation_manager: bool):
+    agent = create_agent(offline, use_conversation_manager)
     launch_gradio(agent)
 
 

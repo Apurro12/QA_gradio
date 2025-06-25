@@ -25,6 +25,13 @@ class BaseConversationManager(ABC): #pragma: no cover
     @abstractmethod
     def add_message(self, message: Message) -> None:
         pass
+
+    @abstractmethod
+    def update_conversation(self, messages: List[Message]) -> None:
+        """
+        Update/replace the conversation with a new list of messages.
+        """
+        pass
     
     @abstractmethod
     def get_conversation_history(self) -> List[MessageWithTimestamp]:

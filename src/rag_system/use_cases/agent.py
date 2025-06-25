@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from rag_system.domain.agent import BaseAgent
 from rag_system.domain.answer_generator import BaseAnswerGenerator
 from rag_system.domain.conversation_manager import BaseConversationManager, Message
@@ -9,7 +9,7 @@ class Agent(BaseAgent):
             self, 
             question_classifier: BaseQuestionClassifier,
             answer_generator: BaseAnswerGenerator,
-            conversation_manager: BaseConversationManager | None = None
+            conversation_manager: Optional[BaseConversationManager] = None
             ):
         self.question_classifier = question_classifier
         self.answer_generator = answer_generator
@@ -59,10 +59,11 @@ class Agent(BaseAgent):
             full_context += f"Relevant Information:\n{document_context}"
         
         response = self.answer_generator.generate(message, full_context)
-        
-        # Add the message at the end so it is not double used in messages and in history
-        self.conversation_manager.add_message(Message(role="user", content=message))
-        self.conversation_manager.add_message(Message(role="assistant", content=response))
+
+        if self.conversation_manager:
+            self.conversation_manager.update_conversation(
+                history + [Message(role="user", content=message), Message(role="assistant", content=response)]
+            )
 
         return response
 
@@ -83,12 +84,12 @@ if __name__ == "__main__":  # pragma: no cover, JUST DO WHEN RUNNING THIS FILE D
     
     # Interactive chat example
     print("Chat interface started. Type 'quit' to exit, 'clear' to clear conversation.")
+    history = [Message(role="assistant", content='empty message')]
     while True:
         user_input = input("You: ")
         if user_input.lower() == 'quit':
             break
         
-        history = [Message(role="user", content='empty message')]
         response = agent.chat(user_input, history)
         print(f"Assistant: {response}")
         print()

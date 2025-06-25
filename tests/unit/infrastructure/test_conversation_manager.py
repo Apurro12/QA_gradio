@@ -32,3 +32,23 @@ class TestInMemoryConversationManager:
         manager.add_message(Message(role="assistant", content="Hi!"))
         manager.clear_conversation()
         assert manager.get_conversation_history() == []
+
+    def test_update_conversation(self, manager: InMemoryConversationManager):
+
+        manager.add_message(Message(role="user", content="Hello!"))
+        assert len(manager.get_conversation_history()) == 1
+        assert manager.get_conversation_history()[0].role == "user"
+        assert manager.get_conversation_history()[0].content == "Hello!"
+
+        messages = [
+            Message(role="user", content="What is the capital of France?"),
+            Message(role="assistant", content="The capital of France is Paris.")
+        ]
+        manager.update_conversation(messages)
+        history = manager.get_conversation_history()
+        assert len(history) == 2
+        assert history[0].role == "user"
+        assert history[0].content == "What is the capital of France?"
+        assert history[1].role == "assistant"
+        assert history[1].content == "The capital of France is Paris."
+

@@ -1,12 +1,14 @@
+from rag_system.domain.conversation_manager import Message
 from unittest.mock import patch, MagicMock
 from rag_system.infrastructure.llm_client import LLMClient
+from types import SimpleNamespace
 
 class TestLLMClient:
 
     def test_llmclient_invoke(self):
-        with patch("rag_system.infrastructure.llm_client.OpenAI") as MockOpenAI:
-            mocked_response = "mocked response"
-            test_prompt = "test prompt"
+        with patch("rag_system.infrastructure.llm_client.ChatOpenAI") as MockOpenAI:
+            mocked_response = SimpleNamespace(content="mocked response")
+            test_prompt = [Message(role="user", content="test prompt")]
 
             mock_llm_instance = MagicMock()
             mock_llm_instance.invoke.return_value = mocked_response
@@ -14,13 +16,13 @@ class TestLLMClient:
 
             llm = LLMClient()
             result = llm.invoke(test_prompt)
-            mock_llm_instance.invoke.assert_called_once_with(test_prompt)
-            assert result == mocked_response
+            mock_llm_instance.invoke.assert_called_once_with([m.model_dump() for m in test_prompt])
+            assert result == mocked_response.content
 
         
     def test_llmclient_error(self):
-        with patch("rag_system.infrastructure.llm_client.OpenAI") as MockOpenAI:
-            test_prompt = "test prompt"
+        with patch("rag_system.infrastructure.llm_client.ChatOpenAI") as MockOpenAI:
+            test_prompt = [Message(role="user", content="test prompt")]
             error_message = "An error occurred: division by zero"
 
             mock_llm_instance = MagicMock()

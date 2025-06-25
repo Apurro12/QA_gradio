@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from rag_system.domain.conversation_manager import Message
+from typing import List
+
 class BaseLLMClient(ABC):
     """
     Base class for LLM clients.
@@ -6,7 +9,7 @@ class BaseLLMClient(ABC):
     """
 
     @abstractmethod
-    def invoke(self, prompt: str) -> str:
+    def invoke(self, messages: List[Message]) -> str:
         """
         Abstract method to be implemented by subclasses to generate a response.
         """

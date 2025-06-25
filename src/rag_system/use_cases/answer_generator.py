@@ -1,5 +1,8 @@
 from rag_system.domain.answer_generator import BaseAnswerGenerator
 from rag_system.domain.llm_client import BaseLLMClient
+from typing import List
+from rag_system.domain.conversation_manager import Message
+
 
 class OfflineAnswerGenerator(BaseAnswerGenerator):
     """
@@ -9,9 +12,9 @@ class OfflineAnswerGenerator(BaseAnswerGenerator):
     def __init__(self, llm: BaseLLMClient):
         self.llm = llm
 
-    def generate(self, question: str, context: str) -> str:
-        return f"[OFFLINE ANSWER GENERATOR] {self.llm.invoke('[OFFLINE LLM CALL]')}"
-    
+    def generate(self, messages: List[Message]) -> str:
+        return f"[OFFLINE ANSWER GENERATOR], last message: {str(messages[-1])}"
+
 
 class AnswerGenerator(BaseAnswerGenerator):
     """
@@ -20,7 +23,9 @@ class AnswerGenerator(BaseAnswerGenerator):
     def __init__(self, llm: BaseLLMClient):
         self.llm = llm
 
-    def generate(self, question: str, context: str) -> str:
-        prompt = f"respond this question:\n{question}\n\nbased in this context: \n{context}\n"
-        response: str = self.llm.invoke(prompt)
+    def generate(self, messages: List[Message]) -> str:
+        
+        #TODO think how to pass prompt templates, or what is necesary to generate the prompt
+        #prompt = f"respond this question:\n{question}\n\nbased in this context: \n{context}\n"
+        response: str = self.llm.invoke(messages)
         return response

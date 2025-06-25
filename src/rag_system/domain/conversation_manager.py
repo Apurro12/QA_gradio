@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Literal, List, Any, TypedDict
 
 
-Role = Literal["user", "assistant"]
+Role = Literal["user", "assistant","system"]
 
 
 class Message(BaseModel):

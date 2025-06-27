@@ -1,26 +1,46 @@
-from typing import List
-from rag_system.domain.conversation_manager import BaseConversationManager, Message, MessageWithTimestamp
+from typing import List, Union
+from rag_system.domain.conversation_manager import BaseConversationManager, Message, MessageWithTimestamp, ToolCallMessage, ToolResponseMessage
 from datetime import datetime
 
 class InMemoryConversationManager(BaseConversationManager):
     def __init__(self) -> None:
-        self.messages: List[MessageWithTimestamp] = []
+        # Storage 1: Gradio conversation (user/assistant messages)
+        self.gradio_messages: List[MessageWithTimestamp] = []
+        # Storage 2: Internal LLM history (tool calls and responses)
+        self.internal_llm_history: List[Union[ToolCallMessage, ToolResponseMessage]] = []
     
     def add_message(self, message: Message) -> None:
+        """Add user/assistant message to Gradio conversation history."""
         message_with_timestamp = MessageWithTimestamp(**message.model_dump(), timestamp=datetime.timestamp(datetime.now()))
-        self.messages.append(message_with_timestamp)
+        self.gradio_messages.append(message_with_timestamp)
+
+    def add_tool_call_message(self, message: ToolCallMessage) -> None:
+        """Add tool call message to internal LLM history."""
+        self.internal_llm_history.append(message)
+
+    def add_tool_response_message(self, message: ToolResponseMessage) -> None:
+        """Add tool response message to internal LLM history."""
+        self.internal_llm_history.append(message)
 
     def update_conversation(self, messages: List[Message]) -> None:
-        """Update/replace the conversation with a new list of messages comming from gradio."""
-
+        """Update/replace the conversation with a new list of messages from Gradio."""
         # This is unnecesary, but I want to be explicit
         self.clear_conversation()
-
         # TODO: the timstamp should be the message time, to update later
-        self.messages = [MessageWithTimestamp(**msg.model_dump(), timestamp=datetime.timestamp(datetime.now())) for msg in messages]
+        self.gradio_messages = [MessageWithTimestamp(**msg.model_dump(), timestamp=datetime.timestamp(datetime.now())) for msg in messages]
     
     def get_conversation_history(self) -> List[MessageWithTimestamp]:
-        return self.messages.copy()
+        """Get Gradio conversation history (user/assistant messages only)."""
+        return self.gradio_messages.copy()
     
     def clear_conversation(self) -> None:
-        self.messages.clear()
+        """Clear Gradio conversation history."""
+        self.gradio_messages.clear()
+
+    def get_internal_llm_history(self) -> List[Union[ToolCallMessage, ToolResponseMessage]]:
+        """Get internal LLM history (tool calls and responses)."""
+        return self.internal_llm_history.copy()
+    
+    def clear_internal_llm_history(self) -> None:
+        """Clear internal LLM history."""
+        self.internal_llm_history.clear()

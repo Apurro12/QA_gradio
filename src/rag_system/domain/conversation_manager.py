@@ -17,14 +17,17 @@ class ToolCalls(TypedDict):
     id: str
     function: FunctionCall
 
-
 # This is doing deep checking into ToolCalls
 # e.g. if name is an int it will fail
 class ToolCallMessage(BaseModel):
     role: Literal["assistant"]
-    content: str
+    content: Literal[""]  # OpenAI does not use content in tool calls
     tool_calls: list[ToolCalls]
 
+class ToolCallMessageOpenAI(TypedDict):
+    role: Literal["assistant"]
+    content: Literal[""]  # OpenAI does not use content in tool calls
+    tool_calls: list[ToolCalls]
 
 class ToolResponseMessage(BaseModel):
     role: Literal["tool"]
@@ -44,6 +47,7 @@ class ToolResponseMessageOpenAI(TypedDict):
 class Message(BaseModel):
     role: Role
     content: str
+
 
 
 class GradioHistoryMessage(TypedDict):

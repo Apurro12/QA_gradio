@@ -1,4 +1,5 @@
 import os
+from typing import cast
 
 from dotenv import load_dotenv
 from langchain_core.messages import (
@@ -11,6 +12,7 @@ from langchain_openai import ChatOpenAI
 from rag_system.domain.conversation_manager import (
     Message,
     ToolCallMessage,
+    ToolCallMessageOpenAI,
     ToolResponseMessage,
     ToolResponseMessageOpenAI,
 )
@@ -52,10 +54,10 @@ class LLMClient(BaseLLMClient):
             response = self._llm_with_tools.invoke(messages_openai_format)
 
             if isinstance(response, AIMessage) and len(response.tool_calls) > 0:
-                # Just to check format
-                tool_call_message = ToolCallMessage(
-                    **convert_to_openai_messages(response)
-                ).model_dump()  # type: ignore
+                
+                tool_call_message: ToolCallMessageOpenAI = ToolCallMessage(
+                    **convert_to_openai_messages(response) # type: ignore
+                ).model_dump()  
                 tool_call_responses: list[ToolResponseMessageOpenAI] = []
                 for tool_call in response.tool_calls:
                     # Call the tool with the arguments provided in the tool call
@@ -69,20 +71,26 @@ class LLMClient(BaseLLMClient):
                     )
 
                     desired_tool = expected_desired_tool[0]
-                    tool_call_response = convert_to_openai_messages(
-                        desired_tool.invoke(tool_call)
-                    )  # type: ignore
-                    ToolResponseMessage(**tool_call_response)  # type: ignore #Just checking type
+                    
+                    tool_call_response = cast(ToolResponseMessageOpenAI, 
+                            convert_to_openai_messages(
+                        desired_tool.invoke(tool_call)  # type: ignore
+                    ))
 
-                    tool_call_responses.append(tool_call_response)  # type: ignore
+                    # Just to check in runtime
+                    ToolResponseMessage(**tool_call_response)  
+
+                    tool_call_responses.append(tool_call_response) 
 
                     final_message = (
                         messages_openai_format
                         + [tool_call_message]
                         + tool_call_responses
                     )
-                    response_with_tool_call = self._llm_with_tools.invoke(final_message)  # type: ignore
-                    content = response_with_tool_call.content  # type: ignore
+                    response_with_tool_call = self._llm_with_tools.invoke(
+                      final_message  # type: ignore
+                    ) 
+                    content = response_with_tool_call.content # type: ignore
                     assert isinstance(content, str)
                     return content
 
@@ -93,9 +101,10 @@ class LLMClient(BaseLLMClient):
 
             # TODO, add a logging here to warn that the return is not a simple string
             assert isinstance(content, str), (
-                f"{type(content)} is not a string, but a complex content type. "
+                f"{type(content)} is not a string"  # type: ignore[misc]
+                ", but a complex content type. "
                 "Please handle this case properly."
-            )  # type: ignore[misc]
+            )  
             return content
 
         except Exception as e:
@@ -108,7 +117,7 @@ class LLMClient(BaseLLMClient):
 if (
     __name__ == "__main__"
 ):  # pragma: no cover, JUST DO WHEN RUNNING THIS FILE DIRECTLY()
-    from rag_system.infrastructure.tools.document_loader import load_documents
+    from rag_system.use_cases.tools.document_loader import load_documents_tool
 
     llm = ChatOpenAI(
         model="gpt-3.5-turbo",
@@ -127,7 +136,7 @@ if (
     )
 
     # TODO: Here the model should not call the tool, just return the text response
-    client = LLMClient(_base_llm=llm, _tools=[load_documents])
+    client = LLMClient(_base_llm=llm, _tools=[load_documents_tool])
     test_messages = [Message(role="user", content="What is the capital of France?")]
     response = client.invoke(test_messages)
     print(response)

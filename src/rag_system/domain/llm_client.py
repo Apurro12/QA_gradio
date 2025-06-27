@@ -47,7 +47,7 @@ class BaseLLMClient(ABC):
     ) -> ChatOpenAI | Runnable[LanguageModelInput, BaseMessage]:
         """Abstract method to load tools into the LLM client."""
         if self._tools:
-            # type: ignore[misc] for bind_tools
-            return self._base_llm.bind_tools(_tools, tool_choice="auto")
+            return self._base_llm.bind_tools(_tools, tool_choice="auto")  # type: ignore[misc]
+
         else:
             return self._base_llm

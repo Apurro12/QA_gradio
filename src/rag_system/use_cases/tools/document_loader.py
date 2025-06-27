@@ -4,7 +4,7 @@ from langchain_core.tools import tool  # type: ignore
 
 
 @tool
-def load_documents(
+def load_documents_tool(
     user_input: Annotated[
         str, "The description of the documents the user wants to retrieve"
     ],

@@ -1,24 +1,19 @@
 from rag_system.domain.agent import BaseAgent
-from rag_system.domain.answer_generator import BaseAnswerGenerator
 from rag_system.domain.conversation_manager import BaseConversationManager, Message
-from rag_system.interfaces.strategies_classifier.exact_match_classifier import (
-    BaseQuestionClassifier,
-)
+from rag_system.infrastructure.llm_client import LLMClient
 
 
 class Agent(BaseAgent):
     def __init__(
         self,
-        question_classifier: BaseQuestionClassifier,
-        answer_generator: BaseAnswerGenerator,
+        llm_client: LLMClient,
         conversation_manager: BaseConversationManager | None = None,
     ):
         """Initialize the agent with a question classifier.
 
         answer generator, and optional conversation manager.
         """
-        self.question_classifier = question_classifier
-        self.answer_generator = answer_generator
+        self.llm_client = llm_client
         self.conversation_manager = conversation_manager
 
     # TODO: Check that is extracting the documents correctly
@@ -32,7 +27,7 @@ class Agent(BaseAgent):
         History is not currently used, it is here to comply with gradio interface.
         Maybe it should be used to maintain conversation history in the future.
         """
-        response = self.answer_generator.generate(
+        response = self.llm_client.invoke(
             history + [Message(role="user", content=message)]
         )
 
@@ -54,31 +49,29 @@ if __name__ == "__main__":  # pragma: no cover, JUST DO WHEN RUNNING THIS FILE D
     from rag_system.infrastructure.conversation_manager import (
         InMemoryConversationManager,
     )
-    from rag_system.infrastructure.document_loader import OfflineDocumentLoader
-    from rag_system.infrastructure.llm_client import OfflineLLMClient
-    from rag_system.interfaces.strategies_classifier.exact_match_classifier import (
-        ExactMatchClassifier,
-    )
-    from rag_system.use_cases.answer_generator import OfflineAnswerGenerator
 
-    llm = OfflineLLMClient()
-    offline_document_loader = OfflineDocumentLoader()
-    question_classifier = ExactMatchClassifier(document_loader=offline_document_loader)
-    answer_generator = OfflineAnswerGenerator(llm=llm)
+    from langchain_openai import ChatOpenAI
+    from rag_system.use_cases.tools.document_loader import load_documents_tool
+
+    llm = LLMClient(
+        ChatOpenAI(),
+        [load_documents_tool]
+    )
+    
     conversation_manager = InMemoryConversationManager()
 
-    agent = Agent(question_classifier, answer_generator, conversation_manager)
+    agent = Agent(llm_client=llm, conversation_manager=conversation_manager)
 
     # Interactive chat example
-    print("Chat interface started. Type 'quit' to exit, 'clear' to clear conversation.")
+    print("Chat interface started. Type 'quit' to exit.")
     history: list[Message] = []
     while True:
         user_input = input("You: ")
         if user_input.lower() == "quit":
             break
 
-        history.append(Message(role="user", content=user_input))
         response = agent.chat(user_input, history)
+        history.append(Message(role="user", content=user_input))
         history.append(Message(role="assistant", content=response))
 
         print(f"Assistant: {response}")

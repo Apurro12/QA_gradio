@@ -22,3 +22,44 @@ dependencies = [
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+# Set the target Python version (adjust to your needs)
+target-version = "py312"
+
+# Choose the rules you want to enable; "all" is common, but you can limit to specific codes.
+lint.select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort (import sorting)
+    "B",    # flake8-bugbear
+    "D",    # pydocstyle
+    "UP",   # pyupgrade
+    "W",
+    "C90",
+]
+
+# Ignore specific rules if you don't want them triggered
+lint.ignore = [
+    "D100",  # Ignore missing docstring in public module
+    "D104",  # Ignore missing docstring in public package
+    "D401",  # First line of docstring should be in imperative mood
+    "D101",  # Ignore missing docstring in public class
+    "D203",  # incorrect-blank-line-before-class
+    "D213",  # multi-line-summary-second-line
+]
+
+# Exclude certain directories (like virtual envs, migrations, etc.)
+exclude = [
+    ".git",
+    "__pycache__",
+    "venv",
+    "migrations",
+]
+
+# Optional: enforce line length (defaults to 88, but you can match Black’s default)
+line-length = 88
+
+# I dont want ruff to fix code in CI
+# to fix in local run uv run ruff check src --fix
+fix = false

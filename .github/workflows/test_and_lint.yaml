@@ -25,7 +25,9 @@ jobs:
         run: uv sync
 
       - name: Run Ruff
-        run: uv run ruff check src
+        run: | 
+          uv run ruff check src
+          uv run ruff format --check src
 
       - name: Run Mypy
         run: |

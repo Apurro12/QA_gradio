@@ -1,11 +1,15 @@
 from abc import ABC, abstractmethod
+
 from rag_system.domain.document import Documents, example_docs
 
+
 class BaseDocumentLoader(ABC):
+    """Base class for document loaders."""
+
     @abstractmethod
     def load(self) -> Documents:
         """Load documents from a source."""
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def load_offline_example_docs(self) -> Documents:
         """Load example documents (shared by all subclasses)."""

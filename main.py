@@ -1,12 +1,13 @@
 import argparse
+
+from rag_system.infrastructure.conversation_manager import InMemoryConversationManager
 from rag_system.infrastructure.document_loader import OfflineDocumentLoader
 from rag_system.infrastructure.llm_client import LLMClient, OfflineLLMClient
 from rag_system.interfaces.gradio_ui import launch_gradio
 from rag_system.interfaces.strategies_classifier.exact_match_classifier import ExactMatchClassifier
 from rag_system.interfaces.strategies_classifier.llm_classifier import LLMClassifier
-from rag_system.use_cases.answer_generator import AnswerGenerator, OfflineAnswerGenerator
 from rag_system.use_cases.agent import Agent
-from rag_system.infrastructure.conversation_manager import InMemoryConversationManager
+from rag_system.use_cases.answer_generator import AnswerGenerator, OfflineAnswerGenerator
 
 
 def create_agent(offline: bool, use_conversation_manager: bool):

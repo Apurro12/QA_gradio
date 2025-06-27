@@ -5,47 +5,55 @@ from rag_system.domain.llm_client import BaseLLMClient
 
 
 class LLMClassifier(BaseQuestionClassifier):
-    """
-    Classify the question using a language model to semantically match the user question to the most relevant document.
-    """
+    """Classify the question."""
+
     def __init__(self, document_loader: BaseDocumentLoader, llm: BaseLLMClient):
+        """Initialize the classifier."""
         self.document_loader = document_loader
         self.llm = llm
 
     def classify(self, question: str) -> Document | EmptyResponse:
+        """Classify the question by selecting the best match."""
         documents = list(self.document_loader.load())
         if not documents:
-            return EmptyResponse({"content": None})
-        # Prepare prompt for LLM to select the best matching document
+            return EmptyResponse()
+
         prompt = (
-            "Given the following example questions and user question, select the set of example questions that best represent the actual user question.\n\n"
-            "Example questions:\n"
+            "You are a classifier. Given a user question, select the set of example "
+            "questions that best represent the actual user question.\n\n"
         )
-        for idx, doc in enumerate(documents):
-            prompt += f"example questions {idx+1}: {doc['questions']}\n"
+        for i, doc in enumerate(documents, 1):
+            prompt += f"{i}. {doc.example_questions}\n"
         prompt += "\n \n \n"
         prompt += f"User Question: {question}\n"
-        prompt += "Respond ONLY with the number of the best matching document. If none match, respond with 0."
+        prompt += (
+            "Respond ONLY with the number of the best matching document. If none match,"
+            "respond with 0."
+        )
 
         # TODO:
-        # force the system to respond with a number, this is fragile
-        response = self.llm.invoke(prompt)
         try:
+            response = self.llm.invoke(prompt)
             index = int(response)
-        except Exception:
-            assert False, "LLM response should be an integer representing the index of the best matching document."
-        
-        if index:
-            return documents[index - 1]
-        
-        return EmptyResponse({"content": None})
-    
-if __name__ == "__main__": # pragma: no cover
-        from rag_system.infrastructure.document_loader import OfflineDocumentLoader
-        from rag_system.infrastructure.llm_client import OfflineLLMClient
+        except (ValueError, TypeError) as err:
+            raise ValueError(
+                """
+                LLM response should be an integer representing
+                the index of the best matching document.
+                """
+            ) from err
 
-        llm = OfflineLLMClient()
-        document_loader = OfflineDocumentLoader()
-        llm_classifier = LLMClassifier(document_loader, llm)
+        if index == 0:
+            return EmptyResponse()
+        return documents[index - 1]
 
-        llm_classifier.classify("How can I get a refund?")
+
+if __name__ == "__main__":  # pragma: no cover
+    from rag_system.infrastructure.document_loader import OfflineDocumentLoader
+    from rag_system.infrastructure.llm_client import OfflineLLMClient
+
+    llm = OfflineLLMClient()
+    document_loader = OfflineDocumentLoader()
+    llm_classifier = LLMClassifier(document_loader, llm)
+
+    llm_classifier.classify("How can I get a refund?")

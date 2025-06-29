@@ -17,6 +17,7 @@ from rag_system.domain.conversation_manager import (
     ToolResponseMessageOpenAI,
 )
 from rag_system.domain.llm_client import BaseLLMClient
+from langchain_core.language_models import BaseChatModel
 
 # Get the directory of the current file
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -26,20 +27,20 @@ load_dotenv(os.path.join(current_dir, "../../../.env"), override=True)
 
 
 class OfflineLLMClient(BaseLLMClient):
-    def __init__(self, _base_llm: ChatOpenAI, _tools: list[LangchainTool]) -> None:
+    def __init__(self, _base_llm: BaseChatModel, _tools: list[LangchainTool]) -> None:
         """Initialize the offline LLM client with the provided base LLM and tools."""
         super().__init__(_base_llm, _tools)
 
     def invoke(self, messages: list[Message]) -> str:
         """Generate a response using the offline LLM client."""
-        return str(messages)
+        return f"Last message is: '{messages[-1].content}'. Available tools: '{list(map(lambda row: row.name, self._tools))}'"
 
 
 # TODO: Here the conversation manager should be able to save the internal
 # conversation state
 class LLMClient(BaseLLMClient):
     def __init__(
-        self, _base_llm: ChatOpenAI, _tools: None | list[LangchainTool] = None
+        self, _base_llm: BaseChatModel, _tools: None | list[LangchainTool] = None
     ) -> None:
         """Initialize the LangChain ChatOpenAI."""
         super().__init__(_base_llm, _tools)
@@ -54,10 +55,9 @@ class LLMClient(BaseLLMClient):
             response = self._llm_with_tools.invoke(messages_openai_format)
 
             if isinstance(response, AIMessage) and len(response.tool_calls) > 0:
-                
                 tool_call_message: ToolCallMessageOpenAI = ToolCallMessage(
-                    **convert_to_openai_messages(response) # type: ignore
-                ).model_dump()  
+                    **convert_to_openai_messages(response)  # type: ignore
+                ).model_dump()
                 tool_call_responses: list[ToolResponseMessageOpenAI] = []
                 for tool_call in response.tool_calls:
                     # Call the tool with the arguments provided in the tool call
@@ -71,16 +71,18 @@ class LLMClient(BaseLLMClient):
                     )
 
                     desired_tool = expected_desired_tool[0]
-                    
-                    tool_call_response = cast(ToolResponseMessageOpenAI, 
-                            convert_to_openai_messages(
-                        desired_tool.invoke(tool_call)  # type: ignore
-                    ))
+
+                    tool_call_response = cast(
+                        ToolResponseMessageOpenAI,
+                        convert_to_openai_messages(
+                            desired_tool.invoke(tool_call)  # type: ignore
+                        ),
+                    )
 
                     # Just to check in runtime
-                    ToolResponseMessage(**tool_call_response)  
+                    ToolResponseMessage(**tool_call_response)
 
-                    tool_call_responses.append(tool_call_response) 
+                    tool_call_responses.append(tool_call_response)
 
                     final_message = (
                         messages_openai_format
@@ -88,9 +90,9 @@ class LLMClient(BaseLLMClient):
                         + tool_call_responses
                     )
                     response_with_tool_call = self._llm_with_tools.invoke(
-                      final_message  # type: ignore
-                    ) 
-                    content = response_with_tool_call.content # type: ignore
+                        final_message  # type: ignore
+                    )
+                    content = response_with_tool_call.content  # type: ignore
                     assert isinstance(content, str)
                     return content
 
@@ -104,7 +106,7 @@ class LLMClient(BaseLLMClient):
                 f"{type(content)} is not a string"  # type: ignore[misc]
                 ", but a complex content type. "
                 "Please handle this case properly."
-            )  
+            )
             return content
 
         except Exception as e:
@@ -123,6 +125,9 @@ if (
         model="gpt-3.5-turbo",
         temperature=0.7,
     )
+
+    offline_client = OfflineLLMClient(llm, [load_documents_tool])
+    print(offline_client.invoke([Message(role="user", content="What is the capital of France?")]))
 
     # Initialize LLMClient with required parameters
     client = LLMClient(_base_llm=llm, _tools=None)

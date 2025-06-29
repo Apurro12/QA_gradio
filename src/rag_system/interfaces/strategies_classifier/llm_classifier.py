@@ -14,16 +14,16 @@ class LLMClassifier(BaseQuestionClassifier):
 
     def classify(self, question: str) -> Document | EmptyResponse:
         """Classify the question by selecting the best match."""
-        documents = list(self.document_loader.load())
+        documents: list[Document] = list(self.document_loader.load())
         if not documents:
-            return EmptyResponse()
+            return EmptyResponse(content=None)
 
         prompt = (
             "You are a classifier. Given a user question, select the set of example "
             "questions that best represent the actual user question.\n\n"
         )
         for i, doc in enumerate(documents, 1):
-            prompt += f"{i}. {doc.example_questions}\n"
+            prompt += f"{i}. {doc["questions"]}\n"
         prompt += "\n \n \n"
         prompt += f"User Question: {question}\n"
         prompt += (
@@ -44,13 +44,13 @@ class LLMClassifier(BaseQuestionClassifier):
             ) from err
 
         if index == 0:
-            return EmptyResponse()
+            return EmptyResponse(content=None)
         return documents[index - 1]
 
 
 if __name__ == "__main__":  # pragma: no cover
     from rag_system.infrastructure.document_loader import OfflineDocumentLoader
-    from rag_system.infrastructure.llm_client import OfflineLLMClient
+    from rag_system.use_cases.llm_client import OfflineLLMClient
 
     llm = OfflineLLMClient()
     document_loader = OfflineDocumentLoader()

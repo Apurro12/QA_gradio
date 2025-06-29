@@ -15,3 +15,9 @@ wheels/
 # coverage
 .coverage
 coverage.xml
+
+# Experimental
+experimental/
+
+# Claude
+CLAUDE.md

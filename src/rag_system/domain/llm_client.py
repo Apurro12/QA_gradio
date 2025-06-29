@@ -6,7 +6,7 @@ from langchain_core.runnables import Runnable
 
 ### from mcp import Tool as MCPTool #TODO add MCP support later
 from langchain_core.tools import BaseTool as LangchainTool
-from langchain_openai import ChatOpenAI
+from langchain_core.language_models import BaseChatModel
 
 from rag_system.domain.conversation_manager import Message
 
@@ -21,7 +21,7 @@ class BaseLLMClient(ABC):
     # It could lead to unexpected behavior due to mutable default arguments
     @abstractmethod
     def __init__(
-        self, _base_llm: ChatOpenAI, _tools: None | list[LangchainTool] = None
+        self, _base_llm: BaseChatModel, _tools: None | list[LangchainTool] = None
     ) -> None:
         """Initialize the LLM client with OpenAI client and tools.
 
@@ -30,9 +30,9 @@ class BaseLLMClient(ABC):
         if _tools:
             self._tools = _tools
         else:
-            self._tools = []
+            self._tools: list[LangchainTool] = []
 
-        self._base_llm: ChatOpenAI = _base_llm
+        self._base_llm: BaseChatModel = _base_llm
         self._llm_with_tools: Runnable[LanguageModelInput, BaseMessage] = (
             self.load_tools(self._tools)
         )
@@ -44,7 +44,7 @@ class BaseLLMClient(ABC):
 
     def load_tools(
         self, _tools: list[LangchainTool]
-    ) -> ChatOpenAI | Runnable[LanguageModelInput, BaseMessage]:
+    ) -> BaseChatModel | Runnable[LanguageModelInput, BaseMessage]:
         """Abstract method to load tools into the LLM client."""
         if self._tools:
             return self._base_llm.bind_tools(_tools, tool_choice="auto")  # type: ignore[misc]

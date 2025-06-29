@@ -6,7 +6,7 @@ from rag_system.domain.agent import BaseAgent
 from rag_system.domain.conversation_manager import Message
 from rag_system.infrastructure.conversation_manager import InMemoryConversationManager
 from rag_system.infrastructure.document_loader import OfflineDocumentLoader
-from rag_system.infrastructure.llm_client import OfflineLLMClient
+from rag_system.use_cases.llm_client import OfflineLLMClient
 from rag_system.interfaces.strategies_classifier.exact_match_classifier import (
     ExactMatchClassifier,
 )

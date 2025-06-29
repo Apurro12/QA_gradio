@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from rag_system.infrastructure.llm_client import OfflineLLMClient
+from rag_system.use_cases.llm_client import OfflineLLMClient
 from rag_system.use_cases.answer_generator import (
     AnswerGenerator,
     OfflineAnswerGenerator,

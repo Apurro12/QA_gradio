@@ -1,12 +1,13 @@
 from rag_system.domain.agent import BaseAgent
 from rag_system.domain.conversation_manager import BaseConversationManager, Message
-from rag_system.infrastructure.llm_client import LLMClient
+from rag_system.use_cases.llm_client import LLMClient
+from rag_system.domain.llm_client import BaseLLMClient
 
 
 class Agent(BaseAgent):
     def __init__(
         self,
-        llm_client: LLMClient,
+        llm_client: BaseLLMClient,
         conversation_manager: BaseConversationManager | None = None,
     ):
         """Initialize the agent with a question classifier.
@@ -46,18 +47,15 @@ class Agent(BaseAgent):
 
 
 if __name__ == "__main__":  # pragma: no cover, JUST DO WHEN RUNNING THIS FILE DIRECTLY
+    from langchain_openai import ChatOpenAI
+
     from rag_system.infrastructure.conversation_manager import (
         InMemoryConversationManager,
     )
-
-    from langchain_openai import ChatOpenAI
     from rag_system.use_cases.tools.document_loader import load_documents_tool
 
-    llm = LLMClient(
-        ChatOpenAI(),
-        [load_documents_tool]
-    )
-    
+    llm = LLMClient(ChatOpenAI(), [load_documents_tool])
+
     conversation_manager = InMemoryConversationManager()
 
     agent = Agent(llm_client=llm, conversation_manager=conversation_manager)

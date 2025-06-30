@@ -23,7 +23,7 @@ class LLMClassifier(BaseQuestionClassifier):
             "questions that best represent the actual user question.\n\n"
         )
         for i, doc in enumerate(documents, 1):
-            prompt += f"{i}. {doc["questions"]}\n"
+            prompt += f"{i}. {doc['questions']}\n"
         prompt += "\n \n \n"
         prompt += f"User Question: {question}\n"
         prompt += (

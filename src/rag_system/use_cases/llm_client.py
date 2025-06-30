@@ -2,6 +2,7 @@ import os
 from typing import cast
 
 from dotenv import load_dotenv
+from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import (
     AIMessage,
     convert_to_openai_messages,  # type: ignore[misc]
@@ -17,7 +18,6 @@ from rag_system.domain.conversation_manager import (
     ToolResponseMessageOpenAI,
 )
 from rag_system.domain.llm_client import BaseLLMClient
-from langchain_core.language_models import BaseChatModel
 
 # Get the directory of the current file
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -33,7 +33,10 @@ class OfflineLLMClient(BaseLLMClient):
 
     def invoke(self, messages: list[Message]) -> str:
         """Generate a response using the offline LLM client."""
-        return f"Last message is: '{messages[-1].content}'. Available tools: '{list(map(lambda row: row.name, self._tools))}'"
+        return (
+            f"Last message is: '{messages[-1].content}'"
+            f". Available tools: '{list(map(lambda row: row.name, self._tools))}'"
+        )
 
 
 # TODO: Here the conversation manager should be able to save the internal
@@ -127,7 +130,11 @@ if (
     )
 
     offline_client = OfflineLLMClient(llm, [load_documents_tool])
-    print(offline_client.invoke([Message(role="user", content="What is the capital of France?")]))
+    print(
+        offline_client.invoke(
+            [Message(role="user", content="What is the capital of France?")]
+        )
+    )
 
     # Initialize LLMClient with required parameters
     client = LLMClient(_base_llm=llm, _tools=None)

@@ -55,12 +55,12 @@ def launch_gradio(agent: BaseAgent):  # pragma: no cover
 
 if __name__ == "__main__":  # pragma: no cover
     from rag_system.infrastructure.document_loader import OfflineDocumentLoader
-    from rag_system.use_cases.llm_client import OfflineLLMClient
     from rag_system.interfaces.strategies_classifier.exact_match_classifier import (
         ExactMatchClassifier,
     )
     from rag_system.use_cases.agent import Agent
     from rag_system.use_cases.answer_generator import OfflineAnswerGenerator
+    from rag_system.use_cases.llm_client import OfflineLLMClient
 
     llm = OfflineLLMClient()
     offline_document_loader = OfflineDocumentLoader()

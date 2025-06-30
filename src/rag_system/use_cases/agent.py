@@ -1,7 +1,7 @@
 from rag_system.domain.agent import BaseAgent
 from rag_system.domain.conversation_manager import BaseConversationManager, Message
-from rag_system.use_cases.llm_client import LLMClient
 from rag_system.domain.llm_client import BaseLLMClient
+from rag_system.use_cases.llm_client import LLMClient
 
 
 class Agent(BaseAgent):

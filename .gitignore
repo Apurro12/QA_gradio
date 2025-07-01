@@ -21,3 +21,8 @@ experimental/
 
 # Claude
 CLAUDE.md
+
+# binaries
+.DS_Store
+*.dot
+*.png

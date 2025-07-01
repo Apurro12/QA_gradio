@@ -54,18 +54,15 @@ def launch_gradio(agent: BaseAgent):  # pragma: no cover
 
 
 if __name__ == "__main__":  # pragma: no cover
-    from rag_system.infrastructure.document_loader import OfflineDocumentLoader
-    from rag_system.interfaces.strategies_classifier.exact_match_classifier import (
-        ExactMatchClassifier,
-    )
+    from langchain_openai import ChatOpenAI
     from rag_system.use_cases.agent import Agent
-    from rag_system.use_cases.answer_generator import OfflineAnswerGenerator
     from rag_system.use_cases.llm_client import OfflineLLMClient
 
-    llm = OfflineLLMClient()
-    offline_document_loader = OfflineDocumentLoader()
-    question_classifier = ExactMatchClassifier(document_loader=offline_document_loader)
-    answer_generator = OfflineAnswerGenerator(llm=llm)
-    agent = Agent(question_classifier, answer_generator)
+    from rag_system.infrastructure.conversation_manager import InMemoryConversationManager
+    from rag_system.use_cases.tools.documents_retrival.retriever_factory import load_documents_tool
+    
+    llm = OfflineLLMClient(ChatOpenAI(), [load_documents_tool])
+    conversation_manager = InMemoryConversationManager()
+    agent = Agent(llm, conversation_manager)
 
     launch_gradio(agent)

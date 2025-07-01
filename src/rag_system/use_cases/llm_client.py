@@ -9,6 +9,7 @@ from langchain_core.messages import (
 )
 from langchain_core.tools import BaseTool as LangchainTool
 from langchain_openai import ChatOpenAI
+from pydantic import BaseModel
 
 from rag_system.domain.conversation_manager import (
     Message,
@@ -18,6 +19,7 @@ from rag_system.domain.conversation_manager import (
     ToolResponseMessageOpenAI,
 )
 from rag_system.domain.llm_client import BaseLLMClient
+import json
 
 # Get the directory of the current file
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -27,12 +29,31 @@ load_dotenv(os.path.join(current_dir, "../../../.env"), override=True)
 
 
 class OfflineLLMClient(BaseLLMClient):
-    def __init__(self, _base_llm: BaseChatModel, _tools: list[LangchainTool]) -> None:
+    def __init__(
+            self,
+            _base_llm: BaseChatModel,
+            _tools: list[LangchainTool],
+            _OutputSchema: type[BaseModel] | None = None
+    ) -> None:
         """Initialize the offline LLM client with the provided base LLM and tools."""
-        super().__init__(_base_llm, _tools)
+        super().__init__(_base_llm, _tools, _OutputSchema)
 
-    def invoke(self, messages: list[Message]) -> str:
+    def invoke(self, messages: list[Message] | str) -> str:
         """Generate a response using the offline LLM client."""
+        if isinstance(messages, str):
+            messages = [Message(role="user", content=messages)]
+
+
+        if messages[-1].content[:5] == "tool:":
+            tool_call = json.loads(messages[-1].content[5:])
+            tool = list(filter( lambda row: row.name == tool_call["name"], self._tools))[0] #type: ignore
+            tool_response = tool.invoke(tool_call["args"]) # type: ignore
+            return json.dumps(tool_response)
+        
+        if messages[-1].content == "list tools":
+            return f"Available tools: {list(map(lambda row: row.name, self._tools))}"
+
+
         return (
             f"Last message is: '{messages[-1].content}'"
             f". Available tools: '{list(map(lambda row: row.name, self._tools))}'"
@@ -43,18 +64,31 @@ class OfflineLLMClient(BaseLLMClient):
 # conversation state
 class LLMClient(BaseLLMClient):
     def __init__(
-        self, _base_llm: BaseChatModel, _tools: None | list[LangchainTool] = None
+        self,
+        _base_llm: BaseChatModel,
+        _tools: None | list[LangchainTool] = None,
+        _OutputSchema: type[BaseModel] | None = None,
     ) -> None:
         """Initialize the LangChain ChatOpenAI."""
-        super().__init__(_base_llm, _tools)
+        super().__init__(_base_llm, _tools, _OutputSchema)
 
-    def invoke(self, messages: list[Message]) -> str:
+    def invoke(self, messages: list[Message] | str) -> str:
         """Generate a response using LangChain's ChatOpenAI client."""
         try:
             # Convert Pydantic Message objects to dicts as expected by ChatOpenAI
+
+            if isinstance(messages, str):
+                # this is beacuse Is SO TEDIOUS to debug in the console
+                # with using str, there is no memory of the previous messages
+                messages = [Message(role="user", content=messages)]
+
             messages_openai_format = [
                 m.model_dump(include={"role", "content"}) for m in messages
             ]
+
+            # TODO
+            # Sometimes is failing because don't allow response_format
+            # How can I handle that? IDK
             response = self._llm_with_tools.invoke(messages_openai_format)
 
             if isinstance(response, AIMessage) and len(response.tool_calls) > 0:
@@ -122,7 +156,9 @@ class LLMClient(BaseLLMClient):
 if (
     __name__ == "__main__"
 ):  # pragma: no cover, JUST DO WHEN RUNNING THIS FILE DIRECTLY()
-    from rag_system.use_cases.tools.document_loader import load_documents_tool
+    from rag_system.use_cases.tools.documents_retrival.retriever_factory import (
+        load_documents_tool,
+    )
 
     llm = ChatOpenAI(
         model="gpt-3.5-turbo",

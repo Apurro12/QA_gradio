@@ -52,7 +52,9 @@ if __name__ == "__main__":  # pragma: no cover, JUST DO WHEN RUNNING THIS FILE D
     from rag_system.infrastructure.conversation_manager import (
         InMemoryConversationManager,
     )
-    from rag_system.use_cases.tools.document_loader import load_documents_tool
+    from rag_system.use_cases.tools.documents_retrival.retriever_factory import (
+        load_documents_tool,
+    )
 
     llm = LLMClient(ChatOpenAI(), [load_documents_tool])
 

@@ -1,0 +1,7 @@
+from .llm_retrieval_strategy import LLMRetrievalStrategy
+from .exact_match_retrieval_strategy import ExactMatchRetrievalStrategy
+
+STRATEGY_REGISTRY = {
+    "llm": LLMRetrievalStrategy,
+    "exact": ExactMatchRetrievalStrategy,
+}

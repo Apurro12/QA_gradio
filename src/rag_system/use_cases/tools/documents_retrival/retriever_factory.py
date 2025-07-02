@@ -1,10 +1,14 @@
 from typing import Annotated
 
-from langchain_core.tools import tool, BaseTool  # type: ignore
+from langchain_core.tools import tool, BaseTool
+from langchain_openai import ChatOpenAI  # type: ignore
 
 from rag_system.domain.classify_question import BaseQuestionClassifier
 from rag_system.domain.document import Document, EmptyResponse
 from rag_system.domain.document_loader import BaseDocumentLoader
+from rag_system.use_cases.llm_client import LLMClient
+from rag_system.use_cases.tools.documents_retrival.strategies.llm_retrieval_strategy import LLMRetrievalStrategy, OutputSchema
+from rag_system.use_cases.tools.documents_retrival.strategies.exact_match_retrieval_strategy import ExactMatchRetrievalStrategy
 
 
 def factory_documents_retrieval_tool(
@@ -31,6 +35,27 @@ def factory_documents_retrieval_tool(
     return documents_retrieval_tool
 
 
+
+RETRIEVAL_STRATEGY_CLASS_MAP: dict[str, type[BaseQuestionClassifier]] = {
+    "exact_match": ExactMatchRetrievalStrategy,
+    "llm": LLMRetrievalStrategy,
+}
+
+def RETRIEVAL_STRATEGY_WKARGS_MAP(QueryServiceWargs: dict) -> object: ## type: ignore
+
+    if "llm" in QueryServiceWargs:
+        return {"llm": LLMClient(
+            ChatOpenAI(model=QueryServiceWargs["llm"]["model"]), # type: ignore
+            _OutputSchema=OutputSchema
+        )} 
+    
+    if "exact_match" in QueryServiceWargs:
+        return dict() # type: ignore
+    
+    assert False, (
+        f"QueryServiceWargs {QueryServiceWargs} is not supported."
+    )
+
 # Pre-configured tool for the main application
 from rag_system.infrastructure.document_loader import OfflineDocumentLoader
 from rag_system.use_cases.tools.documents_retrival.strategies.exact_match_retrieval_strategy import (
@@ -43,15 +68,4 @@ load_documents_tool = factory_documents_retrieval_tool(
 )
 
 if __name__ == "__main__":
-    # This is just for testing purposes, to ensure the tool can be instantiated.
-    from rag_system.infrastructure.document_loader import OfflineDocumentLoader
-    from rag_system.use_cases.tools.documents_retrival.strategies.exact_match_retrieval_strategy import (
-        ExactMatchRetrievalStrategy,
-    )
-
-    tool_instance = factory_documents_retrieval_tool(
-        retrieval_strategy=ExactMatchRetrievalStrategy,
-        document_retriever=OfflineDocumentLoader()
-    )
-
-    print(tool_instance.invoke("What is the refund policy?"))
+    print(load_documents_tool.invoke("What is the refund policy?"))

@@ -47,10 +47,10 @@ def make_interface(agent: BaseAgent):
     return iface
 
 
-def launch_gradio(agent: BaseAgent):  # pragma: no cover
+def launch_gradio(agent: BaseAgent, host: str, port: int, share: bool):  # pragma: no cover
     """Launch the Gradio interface for the RAG agent."""
     iface = make_interface(agent)
-    iface.launch()
+    iface.launch(server_name=host, server_port=port, share=share)
 
 
 if __name__ == "__main__":  # pragma: no cover
@@ -65,4 +65,4 @@ if __name__ == "__main__":  # pragma: no cover
     conversation_manager = InMemoryConversationManager()
     agent = Agent(llm, conversation_manager)
 
-    launch_gradio(agent)
+    launch_gradio(agent, host="127.0.0.1", port=7860, share=False)

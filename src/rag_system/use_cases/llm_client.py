@@ -45,9 +45,13 @@ class OfflineLLMClient(BaseLLMClient):
 
 
         if messages[-1].content[:5] == "tool:":
+            #e.g.
+            #tool: {"name":"documents_retrieval_tool", "args":{"input":"some"}}
+            #tool: {"name":"documents_retrieval_tool", "args":{"input":"How can I get a refund?"}}
+
             tool_call = json.loads(messages[-1].content[5:])
             tool = list(filter( lambda row: row.name == tool_call["name"], self._tools))[0] #type: ignore
-            tool_response = tool.invoke(tool_call["args"]) # type: ignore
+            tool_response = tool.invoke(**tool_call["args"]) # type: ignore
             return json.dumps(tool_response)
         
         if messages[-1].content == "list tools":

@@ -36,14 +36,14 @@ class BaseLLMClient(ABC):
         self._llm_with_tools: Runnable[LanguageModelInput, BaseMessage] = self.load_response_format(
             _OutputSchema
         )
-        self._llm_with_tools: Runnable[LanguageModelInput, BaseMessage] = self.load_tools( # type: ignore[no-redef]
+        self._llm_with_tools: Runnable[LanguageModelInput, BaseMessage] = self.load_tools(  # type: ignore[no-redef]
             self._tools
         )
 
         # TODO: ad this the testing
 
     @abstractmethod
-    def invoke(self, messages: list[Message]) -> str:
+    def invoke(self, messages: list[Message]) -> str:  # pragma: no cover
         """Abstract method to be implemented by subclasses to generate a response."""
         raise NotImplementedError("Subclasses must implement this method.")
 
@@ -63,7 +63,7 @@ class BaseLLMClient(ABC):
     ) -> BaseChatModel | Runnable[LanguageModelInput, BaseMessage]:
         """Abstract method to load tools into the LLM client."""
         if self._tools:
-            return self._llm_with_tools.bind_tools(_tools, tool_choice="auto") #type: ignore
+            return self._llm_with_tools.bind_tools(_tools, tool_choice="auto")  # type: ignore
 
         else:
             return self._llm_with_tools

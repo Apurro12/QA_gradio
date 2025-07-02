@@ -11,6 +11,7 @@ from rag_system.domain.llm_client import BaseLLMClient
 
 class OutputSchema(BaseModel):
     """Schema for response."""
+
     index: int
 
 
@@ -55,7 +56,7 @@ class LLMRetrievalStrategy(BaseQuestionClassifier):
         except (ValueError, TypeError) as err:
             raise ValueError(
                 "LLM response should be an integer representing"
-                 " the index of the best matching document."
+                " the index of the best matching document."
             ) from err
 
         if index == 0:

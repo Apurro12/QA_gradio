@@ -54,3 +54,31 @@ class TestLLMClassifier:
 
         response = llm_classifier.classify("example prompt")
         assert response == EmptyResponse({"content": None})
+
+    def test_llm_with_wrong_output_schema_raises_error(self):
+        """Test that LLMRetrievalStrategy raises ValueError when LLM has wrong OutputSchema."""
+        mock_llm = MagicMock()
+        # Set wrong output schema (not OutputSchema)
+        mock_llm._OutputSchema = str  # Wrong schema type
+        
+        document_loader = OfflineDocumentLoader()
+        
+        with pytest.raises(
+            ValueError,
+            match="LLMClient must be initialized with an OutputSchema."
+        ):
+            LLMRetrievalStrategy(document_loader, mock_llm)
+
+    def test_llm_with_none_output_schema_raises_error(self):
+        """Test that LLMRetrievalStrategy raises ValueError when LLM has None OutputSchema."""
+        mock_llm = MagicMock()
+        # Set None output schema
+        mock_llm._OutputSchema = None
+        
+        document_loader = OfflineDocumentLoader()
+        
+        with pytest.raises(
+            ValueError,
+            match="LLMClient must be initialized with an OutputSchema."
+        ):
+            LLMRetrievalStrategy(document_loader, mock_llm)

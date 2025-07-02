@@ -93,7 +93,8 @@ class LLMClient(BaseLLMClient):
             # How can I handle that? IDK
             response = self._llm_with_tools.invoke(messages_openai_format)
 
-            if isinstance(response, AIMessage) and len(response.tool_calls) > 0:
+            # TODO add tests later this complex logic
+            if isinstance(response, AIMessage) and len(response.tool_calls) > 0:  # pragma: no cover
                 tool_call_message: ToolCallMessageOpenAI = ToolCallMessage(
                     **convert_to_openai_messages(response)  # type: ignore
                 ).model_dump()

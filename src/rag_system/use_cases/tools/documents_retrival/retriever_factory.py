@@ -66,7 +66,7 @@ def RETRIEVAL_STRATEGY_WKARGS_MAP(QueryServiceWargs: dict) -> object:  ## type: 
     raise AssertionError(f"QueryServiceWargs {QueryServiceWargs} is not supported.")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # Pre-configured tool for the main application
     from rag_system.infrastructure.document_loader import OfflineDocumentLoader
 

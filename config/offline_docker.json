@@ -1,0 +1,19 @@
+{
+  "mode": "offline",
+  "llm": {
+    "mode": "offline"
+  },
+  "retrieval": {
+    "ConnectionManager": "offline",
+    "QueryService": "exact_match",
+    "QueryServiceWargs": {
+      "exact_match":{}
+    }
+  },
+  "ui": {
+    "interface": "gradio",
+    "host": "0.0.0.0",
+    "port": 7860,
+    "share": false
+  }
+}

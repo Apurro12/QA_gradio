@@ -1,0 +1,21 @@
+{
+  "mode": "online",
+  "llm": {
+    "mode": "llm"
+  },
+  "retrieval": {
+    "ConnectionManager": "offline",
+    "QueryService": "llm",
+    "QueryServiceWargs": {
+        "llm": {
+          "model": "gpt-4o"
+        }
+    }
+  },
+  "ui": {
+    "interface": "gradio",
+    "host": "0.0.0.0",
+    "port": 7860,
+    "share": false
+  }
+}

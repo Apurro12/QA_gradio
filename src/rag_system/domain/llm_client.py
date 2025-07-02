@@ -33,13 +33,14 @@ class BaseLLMClient(ABC):
         self._tools: list[LangchainTool] = _tools if _tools is not None else []
         self._OutputSchema = _OutputSchema
         self._base_llm: BaseChatModel = _base_llm
-        self._llm_with_tools: Runnable[LanguageModelInput, BaseMessage] = self.load_response_format(_OutputSchema)
-        self._llm_with_tools: Runnable[LanguageModelInput, BaseMessage] = (
-            self.load_tools(self._tools)
+        self._llm_with_tools: Runnable[LanguageModelInput, BaseMessage] = self.load_response_format(
+            _OutputSchema
+        )
+        self._llm_with_tools: Runnable[LanguageModelInput, BaseMessage] = self.load_tools( # type: ignore[no-redef]
+            self._tools
         )
 
         # TODO: ad this the testing
-
 
     @abstractmethod
     def invoke(self, messages: list[Message]) -> str:
@@ -47,16 +48,22 @@ class BaseLLMClient(ABC):
         raise NotImplementedError("Subclasses must implement this method.")
 
     # TODO: add this the testing
-    def load_response_format(self, _OutputSchema: type[BaseModel] | None) -> Runnable[LanguageModelInput, BaseMessage]:
+    def load_response_format(
+        self, _OutputSchema: type[BaseModel] | None
+    ) -> BaseChatModel | Runnable[LanguageModelInput, BaseMessage]:
         """Load the response format into the LLM client."""
-        return self._base_llm if _OutputSchema is None else self._base_llm.bind(response_format=_OutputSchema)
+        return (
+            self._base_llm
+            if _OutputSchema is None
+            else self._base_llm.bind(response_format=_OutputSchema)
+        )
 
     def load_tools(
         self, _tools: list[LangchainTool]
     ) -> BaseChatModel | Runnable[LanguageModelInput, BaseMessage]:
         """Abstract method to load tools into the LLM client."""
         if self._tools:
-            return self._llm_with_tools.bind_tools(_tools, tool_choice="auto")  # type: ignore[misc]
+            return self._llm_with_tools.bind_tools(_tools, tool_choice="auto") #type: ignore
 
         else:
             return self._llm_with_tools

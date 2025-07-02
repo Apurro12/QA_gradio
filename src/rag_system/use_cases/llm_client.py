@@ -1,3 +1,4 @@
+import json
 import os
 from typing import cast
 
@@ -19,7 +20,6 @@ from rag_system.domain.conversation_manager import (
     ToolResponseMessageOpenAI,
 )
 from rag_system.domain.llm_client import BaseLLMClient
-import json
 
 # Get the directory of the current file
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -30,10 +30,10 @@ load_dotenv(os.path.join(current_dir, "../../../.env"), override=True)
 
 class OfflineLLMClient(BaseLLMClient):
     def __init__(
-            self,
-            _base_llm: BaseChatModel,
-            _tools: list[LangchainTool],
-            _OutputSchema: type[BaseModel] | None = None
+        self,
+        _base_llm: BaseChatModel,
+        _tools: list[LangchainTool] | None = None,
+        _OutputSchema: type[BaseModel] | None = None,
     ) -> None:
         """Initialize the offline LLM client with the provided base LLM and tools."""
         super().__init__(_base_llm, _tools, _OutputSchema)
@@ -43,20 +43,20 @@ class OfflineLLMClient(BaseLLMClient):
         if isinstance(messages, str):
             messages = [Message(role="user", content=messages)]
 
-
         if messages[-1].content[:5] == "tool:":
-            #e.g.
-            #tool: {"name":"documents_retrieval_tool", "args":{"input":"some"}}
-            #tool: {"name":"documents_retrieval_tool", "args":{"input":"How can I get a refund?"}}
+            # e.g.
+            # tool: {"name":"documents_retrieval_tool", "args":{"input":"some"}}
+            # tool: {"name":"documents_retrieval_tool", "args":{"input":"How can I get a refund?"}}
 
             tool_call = json.loads(messages[-1].content[5:])
-            tool = list(filter( lambda row: row.name == tool_call["name"], self._tools))[0] #type: ignore
-            tool_response = tool.invoke(**tool_call["args"]) # type: ignore
+            tool = list(  # type: ignore
+                filter(lambda row: row.name == tool_call["name"], self._tools)  # type: ignore
+            )[0]
+            tool_response = tool.invoke(**tool_call["args"])  # type: ignore
             return json.dumps(tool_response)
-        
+
         if messages[-1].content == "list tools":
             return f"Available tools: {list(map(lambda row: row.name, self._tools))}"
-
 
         return (
             f"Last message is: '{messages[-1].content}'"
@@ -86,9 +86,7 @@ class LLMClient(BaseLLMClient):
                 # with using str, there is no memory of the previous messages
                 messages = [Message(role="user", content=messages)]
 
-            messages_openai_format = [
-                m.model_dump(include={"role", "content"}) for m in messages
-            ]
+            messages_openai_format = [m.model_dump(include={"role", "content"}) for m in messages]
 
             # TODO
             # Sometimes is failing because don't allow response_format
@@ -126,9 +124,7 @@ class LLMClient(BaseLLMClient):
                     tool_call_responses.append(tool_call_response)
 
                     final_message = (
-                        messages_openai_format
-                        + [tool_call_message]
-                        + tool_call_responses
+                        messages_openai_format + [tool_call_message] + tool_call_responses
                     )
                     response_with_tool_call = self._llm_with_tools.invoke(
                         final_message  # type: ignore
@@ -157,9 +153,7 @@ class LLMClient(BaseLLMClient):
 # TODO: Add this main with tool calling and check that don't call wikipedia or other not
 # explicitly called tools
 # TODO: is calling tools in the second message
-if (
-    __name__ == "__main__"
-):  # pragma: no cover, JUST DO WHEN RUNNING THIS FILE DIRECTLY()
+if __name__ == "__main__":  # pragma: no cover, JUST DO WHEN RUNNING THIS FILE DIRECTLY()
     from rag_system.use_cases.tools.documents_retrival.retriever_factory import (
         load_documents_tool,
     )
@@ -170,11 +164,7 @@ if (
     )
 
     offline_client = OfflineLLMClient(llm, [load_documents_tool])
-    print(
-        offline_client.invoke(
-            [Message(role="user", content="What is the capital of France?")]
-        )
-    )
+    print(offline_client.invoke([Message(role="user", content="What is the capital of France?")]))
 
     # Initialize LLMClient with required parameters
     client = LLMClient(_base_llm=llm, _tools=None)
@@ -194,8 +184,6 @@ if (
     print(response)
 
     # test that here the model should call the tool
-    test_messages = [
-        Message(role="user", content="Give me some documents about France.")
-    ]
+    test_messages = [Message(role="user", content="Give me some documents about France.")]
     response = client.invoke(test_messages)
     print(response)

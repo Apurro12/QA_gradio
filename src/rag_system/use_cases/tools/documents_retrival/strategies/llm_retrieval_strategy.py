@@ -11,27 +11,23 @@ from rag_system.domain.llm_client import BaseLLMClient
 
 class OutputSchema(BaseModel):
     """Schema for response."""
-
     index: int
+
 
 class LLMRetrievalStrategy(BaseQuestionClassifier):
     """Retrieve documents using LLM-based strategy.
-    
-    This class is supposed to be instantiated with an llm that uses OutputSchema as output schema.
+
+    This class is supposed to be instantiated with an llm"
+    "that uses OutputSchema as output schema.
     """
 
-    def __init__(
-            self,
-            document_loader: BaseDocumentLoader,
-            llm: BaseLLMClient):
+    def __init__(self, document_loader: BaseDocumentLoader, llm: BaseLLMClient):
         """Initialize the retrieval strategy."""
         self.document_loader = document_loader
         self.llm = llm
 
-        if self.llm._OutputSchema != OutputSchema: # type: ignore
-            raise ValueError(
-                "LLMClient must be initialized with an OutputSchema."
-            )
+        if self.llm._OutputSchema != OutputSchema:  # type: ignore
+            raise ValueError("LLMClient must be initialized with an OutputSchema.")
 
     def classify(self, question: str) -> Document | EmptyResponse:
         """Retrieve document by selecting the best match using LLM."""
@@ -58,10 +54,8 @@ class LLMRetrievalStrategy(BaseQuestionClassifier):
             index = int(json.loads(response)["index"])
         except (ValueError, TypeError) as err:
             raise ValueError(
-                """
-                LLM response should be an integer representing
-                the index of the best matching document.
-                """
+                "LLM response should be an integer representing"
+                 " the index of the best matching document."
             ) from err
 
         if index == 0:
@@ -75,8 +69,7 @@ if __name__ == "__main__":  # pragma: no cover
     from rag_system.infrastructure.document_loader import OfflineDocumentLoader
     from rag_system.use_cases.llm_client import LLMClient
 
-
-    llm = LLMClient(ChatOpenAI(model="gpt-4.1"), _OutputSchema = OutputSchema)
+    llm = LLMClient(ChatOpenAI(model="gpt-4.1"), _OutputSchema=OutputSchema)
     document_loader = OfflineDocumentLoader()
     llm_classifier = LLMRetrievalStrategy(document_loader, llm)
 

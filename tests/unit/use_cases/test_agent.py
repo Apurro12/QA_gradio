@@ -7,21 +7,20 @@ from rag_system.domain.conversation_manager import Message
 from rag_system.infrastructure.conversation_manager import InMemoryConversationManager
 from rag_system.infrastructure.document_loader import OfflineDocumentLoader
 from rag_system.use_cases.llm_client import OfflineLLMClient
-from rag_system.interfaces.strategies_classifier.exact_match_classifier import (
-    ExactMatchClassifier,
-)
+from rag_system.use_cases.tools.documents_retrival.strategies.exact_match_retrieval_strategy import ExactMatchRetrievalStrategy
+
 from rag_system.use_cases.agent import Agent
 from rag_system.use_cases.answer_generator import OfflineAnswerGenerator
+from langchain.openai import ChatOpenAI
 
 ## TO DO
 ## ADD THE CASE WHERE THE LOADED GIVES NO DOCUMENTS
-
-
 @pytest.fixture
 def offline_agent():
-    llm = OfflineLLMClient()
+
+    llm = OfflineLLMClient(ChatOpenAI())
     offline_document_loader = OfflineDocumentLoader()
-    question_classifier = ExactMatchClassifier(document_loader=offline_document_loader)
+    question_classifier = ExactMatchRetrievalStrategy(document_loader=offline_document_loader)
     answer_generator = OfflineAnswerGenerator(llm=llm)
     return Agent(question_classifier, answer_generator)
 
@@ -30,7 +29,7 @@ def offline_agent():
 def offline_agent_with_conversation_manager():
     llm = OfflineLLMClient()
     offline_document_loader = OfflineDocumentLoader()
-    question_classifier = ExactMatchClassifier(document_loader=offline_document_loader)
+    question_classifier = ExactMatchRetrievalStrategy(document_loader=offline_document_loader)
     answer_generator = OfflineAnswerGenerator(llm=llm)
     in_memory_conversation_manager = InMemoryConversationManager()
     return Agent(question_classifier, answer_generator, in_memory_conversation_manager)

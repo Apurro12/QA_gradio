@@ -36,9 +36,7 @@ def make_interface(agent: BaseAgent):
         fn=make_respond_to_question(agent),
         title="RAG Agent Chat",
         description="Have a conversation and ask questions based on documents.",
-        textbox=gr.Textbox(
-            placeholder="Ask your question here...", container=False, scale=7
-        ),
+        textbox=gr.Textbox(placeholder="Ask your question here...", container=False, scale=7),
         type="messages",  # This is the type of the input.
         # It should be an OpenAI style:
         # [{"role": "user"/"assistant", "content": "your question"}]
@@ -55,12 +53,16 @@ def launch_gradio(agent: BaseAgent, host: str, port: int, share: bool):  # pragm
 
 if __name__ == "__main__":  # pragma: no cover
     from langchain_openai import ChatOpenAI
+
+    from rag_system.infrastructure.conversation_manager import (
+        InMemoryConversationManager,
+    )
     from rag_system.use_cases.agent import Agent
     from rag_system.use_cases.llm_client import OfflineLLMClient
+    from rag_system.use_cases.tools.documents_retrival.retriever_factory import (
+        load_documents_tool,
+    )
 
-    from rag_system.infrastructure.conversation_manager import InMemoryConversationManager
-    from rag_system.use_cases.tools.documents_retrival.retriever_factory import load_documents_tool
-    
     llm = OfflineLLMClient(ChatOpenAI(), [load_documents_tool])
     conversation_manager = InMemoryConversationManager()
     agent = Agent(llm, conversation_manager)

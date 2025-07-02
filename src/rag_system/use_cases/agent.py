@@ -28,9 +28,7 @@ class Agent(BaseAgent):
         History is not currently used, it is here to comply with gradio interface.
         Maybe it should be used to maintain conversation history in the future.
         """
-        response = self.llm_client.invoke(
-            history + [Message(role="user", content=message)]
-        )
+        response = self.llm_client.invoke(history + [Message(role="user", content=message)])
 
         # TODO: In the future this should save the conversation history in the
         # conversation manager

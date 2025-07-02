@@ -149,7 +149,7 @@ class TestGradioUI:
         # Wait for the page to fully load
         time.sleep(2)
 
-        messages = ["First message", "Second message"]
+        messages = ["Hello my Name is Camilo", "What is the capital of France?"]
 
         for i, message in enumerate(messages):
             # Find and fill the input

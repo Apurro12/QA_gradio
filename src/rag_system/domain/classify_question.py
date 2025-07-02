@@ -10,6 +10,7 @@ class BaseQuestionClassifier(ABC):
     This class can be extended to implement different classification strategies.
     """
 
+    @abstractmethod
     def __init__(self, document_loader: BaseDocumentLoader):
         """Initialize the classifier."""
         pass

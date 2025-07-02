@@ -38,9 +38,7 @@ class InMemoryConversationManager(BaseConversationManager):
         self.clear_conversation()
         # TODO: the timstamp should be the message time, to update later
         self.gradio_messages = [
-            MessageWithTimestamp(
-                **msg.model_dump(), timestamp=datetime.timestamp(datetime.now())
-            )
+            MessageWithTimestamp(**msg.model_dump(), timestamp=datetime.timestamp(datetime.now()))
             for msg in messages
         ]
 

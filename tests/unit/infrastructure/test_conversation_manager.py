@@ -10,9 +10,9 @@ class TestInMemoryConversationManager:
         return InMemoryConversationManager()
 
     def test_initial_state(self, manager: InMemoryConversationManager):
-        assert manager.messages == []
+        assert manager.gradio_messages == []
         assert manager.get_conversation_history() == []
-        assert manager.get_conversation_history() is not manager.messages
+        assert manager.get_conversation_history() is not manager.gradio_messages
 
     def test_add_and_get_conversation_history(self, manager: InMemoryConversationManager):
         manager.add_message(Message(role="user", content="Hello!"))

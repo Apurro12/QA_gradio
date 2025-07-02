@@ -59,7 +59,7 @@ exclude = [
 ]
 
 # Optional: enforce line length (defaults to 88, but you can match Black’s default)
-line-length = 88
+line-length = 100
 
 # I dont want ruff to fix code in CI
 # to fix in local run uv run ruff check src --fix

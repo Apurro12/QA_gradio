@@ -24,7 +24,16 @@ def run_gradio_server(port: int):
     """Function to run Gradio server in separate process"""
     # Use offline configuration from main.py
     create_agent = get_create_agent()
-    agent = create_agent(offline=True, use_conversation_manager=False)
+    
+    # Import config loading
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.join(current_dir, "..", "..")
+    sys.path.insert(0, os.path.abspath(project_root))
+    from config.config import load_config
+    
+    # Load offline config
+    config = load_config("config/offline.json")
+    agent = create_agent(config)
     respond_to_question = make_respond_to_question(agent)
 
     iface = gr.ChatInterface(
@@ -172,10 +181,8 @@ class TestGradioUI:
 
         # Check that both messages are visible in the chat
         for message in messages:
-            assert page.locator(f"text={message}").is_visible()
+            assert page.locator(f"text={message}").first.is_visible()
 
 
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

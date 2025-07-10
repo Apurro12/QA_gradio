@@ -95,6 +95,19 @@ class LLMClient(BaseLLMClient):
 
             # TODO add tests later this complex logic
             if isinstance(response, AIMessage) and len(response.tool_calls) > 0:  # pragma: no cover
+
+                # I don't know when this changed, but the response.content was empty
+                # When there is a tool call
+                pre_tool_call_content: str = ""
+                if response.content != "":
+                    pre_tool_call_content += str(response.content)  # type: ignore[misc]
+                    for tool_call in response.tool_calls:
+                        pre_tool_call_content += (
+                            f"\n Tool calls: {tool_call['name']} with args: {tool_call['args']}\n"
+                        )
+
+                    pre_tool_call_content += "\n"
+
                 tool_call_message: ToolCallMessageOpenAI = ToolCallMessage(
                     **convert_to_openai_messages(response)  # type: ignore
                 ).model_dump()
@@ -132,7 +145,7 @@ class LLMClient(BaseLLMClient):
                     )
                     content = response_with_tool_call.content  # type: ignore
                     assert isinstance(content, str)
-                    return content
+                    return pre_tool_call_content + content
 
             # Handle the content type properly - LangChain response content can be str
             # or complex content

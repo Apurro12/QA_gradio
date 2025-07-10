@@ -22,13 +22,13 @@ class ToolCalls(TypedDict):
 # e.g. if name is an int it will fail
 class ToolCallMessage(BaseModel):
     role: Literal["assistant"]
-    content: Literal[""]  # OpenAI does not use content in tool calls
+    content: str
     tool_calls: list[ToolCalls]
 
 
 class ToolCallMessageOpenAI(TypedDict):
     role: Literal["assistant"]
-    content: Literal[""]  # OpenAI does not use content in tool calls
+    content: str
     tool_calls: list[ToolCalls]
 
 

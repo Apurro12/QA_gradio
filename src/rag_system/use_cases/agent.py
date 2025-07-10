@@ -50,8 +50,33 @@ if __name__ == "__main__":  # pragma: no cover, JUST DO WHEN RUNNING THIS FILE D
     from rag_system.infrastructure.conversation_manager import (
         InMemoryConversationManager,
     )
+
+    from rag_system.infrastructure.document_retriever_loader import DOCUMENT_RETRIVAL_CLASS_MAP
     from rag_system.use_cases.tools.documents_retrival.retriever_factory import (
-        load_documents_tool,
+        RETRIEVAL_STRATEGY_CLASS_MAP,
+        RETRIEVAL_STRATEGY_WKARGS_MAP,  # type: ignore
+        factory_documents_retrieval_tool # type: ignore
+    )
+
+    import os
+    import sys
+
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.join(current_dir, "..", "..","..")
+    sys.path.insert(0, os.path.abspath(project_root))
+
+    from config.config import RAGConfig, load_config
+
+    config: RAGConfig = load_config(f"config/default.json")
+
+    ConnectionManager = DOCUMENT_RETRIVAL_CLASS_MAP[config.retrieval.ConnectionManager]
+    QueryService = RETRIEVAL_STRATEGY_CLASS_MAP[config.retrieval.QueryService]
+    QueryServiceWargs = RETRIEVAL_STRATEGY_WKARGS_MAP(config.retrieval.QueryServiceWargs)
+
+    load_documents_tool = factory_documents_retrieval_tool( #type: ignore
+        retrieval_strategy=QueryService,
+        document_retriever=ConnectionManager(),
+        **QueryServiceWargs # type: ignore
     )
 
     llm = LLMClient(ChatOpenAI(), [load_documents_tool])

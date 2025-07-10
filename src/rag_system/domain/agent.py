@@ -10,6 +10,6 @@ class BaseAgent(ABC):
     """
 
     @abstractmethod
-    def chat(self, message: str, history: list[Message]) -> str:
+    def chat(self, message: str, history: list[Message], session_id: str | None = None) -> str:
         """Chat with the user, using the history of messages."""
         pass  # pragma: no cover

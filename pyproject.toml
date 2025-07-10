@@ -5,6 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "arize-phoenix-otel>=0.12.1",
+    "arize-phoenix[evals]>=11.5.0",
     "dotenv>=0.9.9",
     "gradio>=5.33.0",
     "ipython>=9.3.0",

@@ -3,12 +3,15 @@ from rag_system.domain.conversation_manager import BaseConversationManager, Mess
 from rag_system.domain.llm_client import BaseLLMClient
 from rag_system.use_cases.llm_client import LLMClient
 
+from opentelemetry import trace
+from openinference.semconv.trace import SpanAttributes
 
 class Agent(BaseAgent):
     def __init__(
         self,
         llm_client: BaseLLMClient,
         conversation_manager: BaseConversationManager | None = None,
+        tracer_provider: trace.TracerProvider | None = None, 
     ):
         """Initialize the agent with a question classifier.
 
@@ -16,9 +19,16 @@ class Agent(BaseAgent):
         """
         self.llm_client = llm_client
         self.conversation_manager = conversation_manager
+        self.tracer_provider = tracer_provider
+
+        # How this work with tracer_provider being None?
+        self.tracer = trace.get_tracer(
+            "use_cases.agent.Agent", 
+            tracer_provider=tracer_provider
+        )
 
     # TODO: Check that is extracting the documents correctly
-    def chat(self, message: str, history: list[Message]) -> str:
+    def chat(self, message: str, history: list[Message], session_id: str | None = None) -> str:
         """Handle a chat message with conversation context.
 
         If conversation manager is not provided, fallback to simple question
@@ -28,18 +38,25 @@ class Agent(BaseAgent):
         History is not currently used, it is here to comply with gradio interface.
         Maybe it should be used to maintain conversation history in the future.
         """
-        response = self.llm_client.invoke(history + [Message(role="user", content=message)])
+        with self.tracer.start_as_current_span("agent_chat") as agent_span:
+            response = self.llm_client.invoke(history + [Message(role="user", content=message)])
 
-        # TODO: In the future this should save the conversation history in the
-        # conversation manager
-        if self.conversation_manager:
-            self.conversation_manager.update_conversation(
-                history
-                + [
-                    Message(role="user", content=message),
-                    Message(role="assistant", content=response),
-                ]
-            )
+            # TODO: In the future this should save the conversation history in the
+            # conversation manager
+
+            if session_id is not None:
+                agent_span.set_attribute(SpanAttributes.SESSION_ID, session_id)
+            agent_span.set_attribute(SpanAttributes.INPUT_VALUE, message)
+            agent_span.set_attribute(SpanAttributes.OUTPUT_VALUE, response) #type: ignore
+
+            if self.conversation_manager:
+                self.conversation_manager.update_conversation(
+                    history
+                    + [
+                        Message(role="user", content=message),
+                        Message(role="assistant", content=response),
+                    ]
+                )
 
         return response
 

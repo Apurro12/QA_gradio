@@ -32,7 +32,6 @@ class UIConfig(BaseModel):
     port: int = Field(description="Port number")
     share: bool = Field(description="Enable public sharing")
 
-
 class RAGConfig(BaseModel):
     """Main RAG system configuration."""
     
@@ -40,6 +39,8 @@ class RAGConfig(BaseModel):
     llm: LLMConfig
     retrieval: RetrievalConfig
     ui: UIConfig
+    tracer: bool = Field(description="Enable tracing", default=False)
+
 
 
 def load_config(config_path: str) -> RAGConfig:

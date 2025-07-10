@@ -13,11 +13,15 @@ from rag_system.use_cases.tools.documents_retrival.retriever_factory import (
     RETRIEVAL_STRATEGY_WKARGS_MAP,  # type: ignore
     factory_documents_retrieval_tool # type: ignore
 )
+from phoenix.otel import register
+from opentelemetry import trace
 
-def create_agent(config: RAGConfig) -> Agent:
+def create_agent(
+        config: RAGConfig,
+        tracer_provider: trace.TracerProvider | None
+    ) -> Agent:
     """Create and return configured agent."""
 
-    
     ConnectionManager = DOCUMENT_RETRIVAL_CLASS_MAP[config.retrieval.ConnectionManager]
     QueryService = RETRIEVAL_STRATEGY_CLASS_MAP[config.retrieval.QueryService]
     QueryServiceWargs = RETRIEVAL_STRATEGY_WKARGS_MAP(config.retrieval.QueryServiceWargs)
@@ -33,7 +37,7 @@ def create_agent(config: RAGConfig) -> Agent:
 
     conversation_manager = InMemoryConversationManager()
 
-    return Agent(llm, conversation_manager)
+    return Agent(llm, conversation_manager, tracer_provider)
 
 def main(config_name: str | None = None, offline: bool = False):
     """Create agent and launch Gradio UI."""
@@ -43,8 +47,16 @@ def main(config_name: str | None = None, offline: bool = False):
     # If offline mode is on, override the configuration name
     config: RAGConfig = load_config(f"config/{config_name}.json" if config_name else "config/default.json")
     
+    tracer_provider = None
+    if config.tracer:
+        tracer_provider = register(
+            project_name="openai-sessions-example",
+            set_global_tracer_provider=False)
     # Get agent and launch UI
-    agent = create_agent(config)
+    agent = create_agent(
+        config,
+        tracer_provider
+    )
     launch_gradio(agent, 
                  host=config.ui.host,
                  port=config.ui.port,

@@ -6,6 +6,8 @@ from rag_system.use_cases.llm_client import LLMClient
 from opentelemetry import trace
 from openinference.semconv.trace import SpanAttributes
 
+from rag_system.use_cases.tracers.dummy_tracer import DummyTracer
+
 class Agent(BaseAgent):
     def __init__(
         self,
@@ -21,11 +23,11 @@ class Agent(BaseAgent):
         self.conversation_manager = conversation_manager
         self.tracer_provider = tracer_provider
 
-        # How this work with tracer_provider being None?
-        self.tracer = trace.get_tracer(
-            "use_cases.agent.Agent", 
-            tracer_provider=tracer_provider
-        )
+        # Should I add some check that both are None at the same time?
+        # And both are initialized at the same time?        
+        self.tracer = trace.get_tracer("use_cases.agent.Agent", tracer_provider=self.tracer_provider) if self.tracer_provider else DummyTracer()
+            
+        
 
     # TODO: Check that is extracting the documents correctly
     def chat(self, message: str, history: list[Message], session_id: str | None = None) -> str:

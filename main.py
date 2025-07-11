@@ -51,13 +51,12 @@ def main(config_name: str | None = None, offline: bool = False):
     # If offline mode is on, override the configuration name
     config: RAGConfig = load_config(f"config/{config_name}.json" if config_name else "config/default.json")
     
-    
-    phoenix_endpoint = os.environ.get("PHOENIX_ENDPOINT")
-    if phoenix_endpoint is None:
-        raise ValueError("PHOENIX_ENDPOINT environment variable is not set. Please set it to the Phoenix endpoint URL.")
-
     tracer_provider = None    
     if config.tracer:
+        phoenix_endpoint = os.environ.get("PHOENIX_ENDPOINT")
+        if phoenix_endpoint is None:
+            raise ValueError("PHOENIX_ENDPOINT environment variable is not set. Please set it to the Phoenix endpoint URL.")
+
         tracer_provider = register(
             project_name="openai-sessions-example",
             set_global_tracer_provider=False,

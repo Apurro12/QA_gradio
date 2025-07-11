@@ -15,6 +15,10 @@ from rag_system.use_cases.tools.documents_retrival.retriever_factory import (
 )
 from phoenix.otel import register
 from opentelemetry import trace
+import os
+from dotenv import load_dotenv
+
+load_dotenv(".env")
 
 def create_agent(
         config: RAGConfig,
@@ -47,11 +51,18 @@ def main(config_name: str | None = None, offline: bool = False):
     # If offline mode is on, override the configuration name
     config: RAGConfig = load_config(f"config/{config_name}.json" if config_name else "config/default.json")
     
-    tracer_provider = None
+    
+    phoenix_endpoint = os.environ.get("PHOENIX_ENDPOINT")
+    if phoenix_endpoint is None:
+        raise ValueError("PHOENIX_ENDPOINT environment variable is not set. Please set it to the Phoenix endpoint URL.")
+
+    tracer_provider = None    
     if config.tracer:
         tracer_provider = register(
             project_name="openai-sessions-example",
-            set_global_tracer_provider=False)
+            set_global_tracer_provider=False,
+            endpoint=phoenix_endpoint,
+        )
     # Get agent and launch UI
     agent = create_agent(
         config,

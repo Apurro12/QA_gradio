@@ -1,6 +1,7 @@
+from uuid import uuid4 as uuid  # pragma: no cover
+
 import gradio as gr  # pragma: no cover
 
-from uuid import uuid4 as uuid  # pragma: no cover
 from rag_system.domain.agent import BaseAgent  # pragma: no cover
 from rag_system.domain.conversation_manager import (
     GradioHistoryMessage,
@@ -13,13 +14,15 @@ from rag_system.domain.conversation_manager import (
 # This file is used to launch the Gradio interface for the RAG agent.
 # It is designed to be run as a standalone script.
 
+
 def make_respond_to_question(agent: BaseAgent):
     """Create a function to respond to questions using the RAG agent."""
+
     def respond_to_question(
-            message: str, 
-            history: list[GradioHistoryMessage],
-            session_id: str  # This is used to track the session in Gradio
-            ) -> str:
+        message: str,
+        history: list[GradioHistoryMessage],
+        session_id: str,  # This is used to track the session in Gradio
+    ) -> str:
         history_list: list[Message] = list(
             map(
                 lambda gradio_message: Message(
@@ -32,16 +35,19 @@ def make_respond_to_question(agent: BaseAgent):
 
     return respond_to_question
 
+
 # This will store the session ID in the state
 def generate_session_id(request: gr.Request):
+    """Generate a unique session ID for the Gradio interface."""
     return str(uuid())
+
 
 def make_interface(agent: BaseAgent):
     """Create a Gradio interface for the RAG agent."""
     with gr.Blocks() as demo:
         session_state = gr.State()
 
-        chat = gr.ChatInterface(
+        chat = gr.ChatInterface(  # type: ignore # noqa: F841
             fn=make_respond_to_question(agent),
             title="RAG Agent Chat",
             description="Have a conversation and ask questions based on documents.",
@@ -56,7 +62,6 @@ def make_interface(agent: BaseAgent):
             generate_session_id,
             inputs=None,
             outputs=session_state,
-            #every=True
         )
 
     return demo

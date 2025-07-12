@@ -95,7 +95,6 @@ class LLMClient(BaseLLMClient):
 
             # TODO add tests later this complex logic
             if isinstance(response, AIMessage) and len(response.tool_calls) > 0:  # pragma: no cover
-
                 # I don't know when this changed, but the response.content was empty
                 # When there is a tool call
                 pre_tool_call_content: str = ""

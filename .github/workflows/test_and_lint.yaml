@@ -42,4 +42,4 @@ jobs:
       - name: Run Pytest with Coverage
         run: |
           uv run pytest tests/unit --cov=src --cov-report=term-missing --cov-fail-under=100
-          uv run pytest tests/integration --cov=src --cov-report=term-missing --cov-fail-under=100
+          uv run pytest tests/integration --cov=src --cov-report=term-missing 

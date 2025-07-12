@@ -33,7 +33,7 @@ def run_gradio_server(port: int):
     
     # Load offline config
     config = load_config("config/offline.json")
-    agent = create_agent(config)
+    agent = create_agent(config, None)
     respond_to_question = make_respond_to_question(agent)
 
     iface = gr.ChatInterface(
@@ -182,7 +182,3 @@ class TestGradioUI:
         # Check that both messages are visible in the chat
         for message in messages:
             assert page.locator(f"text={message}").first.is_visible()
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

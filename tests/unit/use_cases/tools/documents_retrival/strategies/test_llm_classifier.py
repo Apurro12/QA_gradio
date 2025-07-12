@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from rag_system.domain.document import EmptyResponse, example_docs
-from rag_system.infrastructure.document_loader import OfflineDocumentLoader
+from rag_system.infrastructure.offline_document_loader import OfflineDocumentLoader
 from rag_system.use_cases.tools.documents_retrival.strategies.llm_retrieval_strategy import LLMRetrievalStrategy, OutputSchema
 
 

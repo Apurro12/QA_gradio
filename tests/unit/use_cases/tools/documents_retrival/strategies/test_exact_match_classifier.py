@@ -1,5 +1,5 @@
 from rag_system.domain.document import EmptyResponse, example_docs
-from rag_system.infrastructure.document_loader import OfflineDocumentLoader
+from rag_system.infrastructure.offline_document_loader import OfflineDocumentLoader
 from rag_system.use_cases.tools.documents_retrival.strategies.exact_match_retrieval_strategy import ExactMatchRetrievalStrategy
 
 

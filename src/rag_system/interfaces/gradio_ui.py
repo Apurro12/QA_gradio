@@ -18,7 +18,7 @@ def make_respond_to_question(agent: BaseAgent):
     def respond_to_question(
             message: str, 
             history: list[GradioHistoryMessage],
-            session_id: str | None  # This is used to track the session in Gradio
+            session_id: str  # This is used to track the session in Gradio
             ) -> str:
         history_list: list[Message] = list(
             map(

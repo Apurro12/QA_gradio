@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
-
-from rag_system.interfaces.gradio_ui import make_interface, make_respond_to_question
+import gradio as gr
+from rag_system.interfaces.gradio_ui import make_interface, make_respond_to_question, generate_session_id
 
 
 class TestGradioUI:
@@ -26,7 +26,7 @@ class TestGradioUI:
             {"role": "assistant", "content": "Previous assistant response"}
         ]
         
-        result = respond_function("Current message", history)
+        result = respond_function("Current message", history, "test-session")
         
         # Verify agent.chat was called with the message and converted history
         mock_agent.chat.assert_called_once()
@@ -37,6 +37,7 @@ class TestGradioUI:
         assert call_args[0][1][0].content == "Previous user message"
         assert call_args[0][1][1].role == "assistant"
         assert call_args[0][1][1].content == "Previous assistant response"
+        assert call_args[1]["session_id"] == "test-session"  # Check session_id keyword arg
         
         assert result == "Test response"
 
@@ -47,9 +48,9 @@ class TestGradioUI:
         
         respond_function = make_respond_to_question(mock_agent)
         
-        result = respond_function("First message", [])
+        result = respond_function("First message", [], "test-session")
         
-        mock_agent.chat.assert_called_once_with("First message", [])
+        mock_agent.chat.assert_called_once_with("First message", [], session_id="test-session")
         assert result == "Response to first message"
 
     @patch('rag_system.interfaces.gradio_ui.gr.ChatInterface')
@@ -59,10 +60,14 @@ class TestGradioUI:
         mock_interface = MagicMock()
         mock_chat_interface.return_value = mock_interface
         
-        interface = make_interface(mock_agent)
+        demo = make_interface(mock_agent)
         
         mock_chat_interface.assert_called_once()
-        assert interface == mock_interface
+        # The function returns a gr.Blocks object, not the ChatInterface directly
+        assert demo is not None
+        assert isinstance(demo, gr.Blocks)
+        assert hasattr(demo, 'launch')
+        assert callable(demo.launch)
 
     @patch('rag_system.interfaces.gradio_ui.gr.ChatInterface')
     def test_make_interface_configuration(self, mock_chat_interface):
@@ -78,3 +83,14 @@ class TestGradioUI:
         assert call_kwargs["title"] == "RAG Agent Chat"
         assert call_kwargs["description"] == "Have a conversation and ask questions based on documents."
         assert call_kwargs["type"] == "messages"
+
+class TestGenerateSessionId:
+    def test_generate_session_id_returns_string(self):
+        """Test that generate_session_id returns a string."""
+        from gradio import Request
+        
+        mock_request = Request()
+        session_id = generate_session_id(mock_request)
+        
+        assert isinstance(session_id, str)
+        assert len(session_id) > 0  # Ensure it's not an empty string

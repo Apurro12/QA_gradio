@@ -4,7 +4,7 @@ import pytest
 from langchain_core.tools import BaseTool
 
 from rag_system.domain.document import Document, EmptyResponse
-from rag_system.infrastructure.document_loader import OfflineDocumentLoader
+from rag_system.infrastructure.offline_document_loader import OfflineDocumentLoader
 from rag_system.use_cases.tools.documents_retrival.retriever_factory import (
     RETRIEVAL_STRATEGY_CLASS_MAP,
     RETRIEVAL_STRATEGY_WKARGS_MAP,

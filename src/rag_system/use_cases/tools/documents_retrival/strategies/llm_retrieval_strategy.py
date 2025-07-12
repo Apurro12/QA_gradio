@@ -67,7 +67,7 @@ class LLMRetrievalStrategy(BaseQuestionClassifier):
 if __name__ == "__main__":  # pragma: no cover
     from langchain_openai import ChatOpenAI
 
-    from rag_system.infrastructure.document_loader import OfflineDocumentLoader
+    from rag_system.infrastructure.offline_document_loader import OfflineDocumentLoader
     from rag_system.use_cases.llm_client import LLMClient
 
     llm = LLMClient(ChatOpenAI(model="gpt-4.1"), _OutputSchema=OutputSchema)

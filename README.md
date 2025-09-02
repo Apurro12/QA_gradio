@@ -1,4 +1,4 @@
-# RAG System
+# RAG System 
 
 A production-ready Retrieval-Augmented Generation (RAG) system built with Clean Architecture principles, featuring both online and offline operation modes with comprehensive testing and CI/CD pipeline.
 
